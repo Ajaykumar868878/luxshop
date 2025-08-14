@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile | LuxeShop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* Global Styles */
         :root {
@@ -12,6 +13,9 @@
             --light: #ecf0f1;
             --dark: #2c3e50;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --text-light: #7f8c8d;
+            --text-dark: #2c3e50;
+            --accent: #e74c3c;
         }
         
         * {
@@ -50,8 +54,8 @@
         }
         
         .logo {
-            font-size: 24px;
-            font-weight: 700;
+            font-size: 28px;
+            font-weight: bold;
             color: var(--primary);
             text-decoration: none;
         }
@@ -83,37 +87,23 @@
             align-items: center;
         }
         
-        .icons i {
-            font-size: 20px;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        
-        .icons i:hover {
-            color: var(--secondary);
-        }
-        
-        /* Auth Buttons */
         .auth-buttons {
             display: flex;
             gap: 10px;
-            align-items: center;
+            margin-right: 20px;
         }
         
         .auth-btn {
-            padding: 8px 16px;
-            border: 2px solid var(--primary);
-            border-radius: 20px;
+            padding: 8px 20px;
             text-decoration: none;
+            border-radius: 5px;
             font-weight: 500;
-            font-size: 14px;
             transition: all 0.3s;
-            cursor: pointer;
         }
         
         .login-btn {
             color: var(--primary);
-            background-color: transparent;
+            border: 2px solid var(--primary);
         }
         
         .login-btn:hover {
@@ -124,16 +114,120 @@
         .signup-btn {
             background-color: var(--secondary);
             color: white;
-            border-color: var(--secondary);
+            border: 2px solid var(--secondary);
         }
         
         .signup-btn:hover {
             background-color: #c0392b;
             border-color: #c0392b;
+        }
+        
+        .icon-tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .icon-tooltip a {
+            color: var(--dark);
+            font-size: 20px;
+            text-decoration: none;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        .icon-tooltip a:hover {
+            color: var(--secondary);
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tooltip-text {
+            visibility: hidden;
+            width: 80px;
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px 0;
+            font-size: 12px;
+            font-weight: 500;
+            position: absolute;
+            z-index: 1000;
+            top: 125%;
+            left: 50%;
+            margin-left: -40px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent var(--primary) transparent;
+        }
+        
+        .icon-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(5px);
+        }
+        
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--secondary);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: #c0392b;
             transform: translateY(-2px);
         }
         
-        /* Profile Page Styles */
+        .btn-primary {
+            background-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: #1a252f;
+        }
+        
+        .btn-secondary {
+            background-color: #95a5a6;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+
+        /* Profile Page Specific Styles */
         .profile-section {
             padding: 60px 0;
             min-height: 80vh;
@@ -477,8 +571,22 @@
                         <a href="/signup" class="auth-btn signup-btn">Sign Up</a>
                     </div>
                     
-                    <a href="/user"><i class="fas fa-user"></i></a>
-                    <a href="/cart"><i class="fas fa-shopping-cart"></i></a>
+                    <a href="/user" class="icon-tooltip">
+                        <i class="fas fa-user"></i>
+                        <span class="tooltip-text">Profile</span>
+                    </a>
+                    
+                    <div class="icon-tooltip">
+                        <a href="/wishlist">
+                        <i class="fas fa-heart"></i>
+                        <span class="tooltip-text">Wishlist</span>
+                        </a>
+                    </div>
+                    
+                    <a href="/cart" class="icon-tooltip">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="tooltip-text">Cart</span>
+                    </a>
                 </div>
             </nav>
         </div>

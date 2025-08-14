@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist - LuxeShop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Global Styles */
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --text-light: #7f8c8d;
+            --text-dark: #2c3e50;
+            --accent: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .logo span {
+            color: var(--secondary);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--secondary);
+        }
+        
+        .icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .icon-tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .icon-tooltip a {
+            color: var(--dark);
+            font-size: 20px;
+            text-decoration: none;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        .icon-tooltip a:hover {
+            color: var(--secondary);
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tooltip-text {
+            visibility: hidden;
+            width: 80px;
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px 0;
+            font-size: 12px;
+            font-weight: 500;
+            position: absolute;
+            z-index: 1000;
+            top: 125%;
+            left: 50%;
+            margin-left: -40px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent var(--primary) transparent;
+        }
+        
+        .icon-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(5px);
+        }
+        
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--secondary);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: #1a252f;
+        }
+        
+        .btn-secondary {
+            background-color: #95a5a6;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        
+        /* Footer Styles */
+        .footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 50px 0 20px;
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .footer-section h3,
+        .footer-section h4 {
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .footer-section p {
+            margin-bottom: 20px;
+            color: #bdc3c7;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-section ul li a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-section ul li a:hover {
+            color: white;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-links a {
+            color: #bdc3c7;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: var(--secondary);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #34495e;
+            color: #bdc3c7;
+        }
+        
+        /* Product Grid Styles */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .product-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .product-info {
+            padding: 20px;
+        }
+        
+        .product-info h3 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .price {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+        
+        .related-section {
+            margin-top: 50px;
+        }
+        
+        .related-section h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+        }
+
+        /* Wishlist specific styles */
+        .wishlist-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .wishlist-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .wishlist-header h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .wishlist-header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .wishlist-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            min-width: 150px;
+        }
+
+        .stat-item .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: block;
+        }
+
+        .stat-item .label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .wishlist-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .wishlist-filters {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            background: white;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .wishlist-item {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .wishlist-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .wishlist-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .wishlist-item-content {
+            padding: 1.5rem;
+        }
+
+        .wishlist-item h3 {
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .wishlist-item .brand {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .wishlist-item .price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .wishlist-item .original-price {
+            text-decoration: line-through;
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-left: 0.5rem;
+        }
+
+        .wishlist-item .discount {
+            background: var(--accent);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        .wishlist-item-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .wishlist-item-actions .btn {
+            flex: 1;
+            padding: 0.7rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-remove {
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-remove:hover {
+            background: #ff3838;
+        }
+
+        .wishlist-item .date-added {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.3rem 0.7rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .stock-status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .in-stock {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .out-of-stock {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .low-stock {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .empty-wishlist {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-wishlist i {
+            font-size: 4rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .empty-wishlist h3 {
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .empty-wishlist p {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        /* Mobile Navigation Styles */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: var(--primary);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                flex-direction: column;
+                padding: 1rem 0;
+                z-index: 1000;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .nav-menu a {
+                padding: 1rem 2rem;
+                border-bottom: 1px solid #f0f0f0;
+                text-align: left;
+            }
+
+            .nav-menu a:last-child {
+                border-bottom: none;
+            }
+
+            .nav-icons {
+                gap: 1rem;
+            }
+
+            .wishlist-container {
+                padding: 1rem;
+            }
+
+            .wishlist-header h1 {
+                font-size: 2rem;
+            }
+
+            .wishlist-stats {
+                gap: 1rem;
+            }
+
+            .stat-item {
+                min-width: 120px;
+                padding: 1rem;
+            }
+
+            .wishlist-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .wishlist-filters {
+                justify-content: center;
+            }
+
+            .wishlist-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="{{ url_for('index') }}" class="logo">Luxe<span>Shop</span></a>
+                <div class="nav-links">
+                    <a href="/index">Home</a>
+                    <a href="/shop">Shop</a>
+                    <a href="/about">About</a>
+                    <a href="/contact">Contact</a>
+                </div>
+                <div class="icons">
+                    <a href="/user" class="icon-tooltip">
+                        <i class="fas fa-user"></i>
+                        <span class="tooltip-text">Profile</span>
+                    </a>
+                    
+                    <div class="icon-tooltip">
+                        <a href="/wishlist">
+                        <i class="fas fa-heart"></i>
+                        <span class="tooltip-text">Wishlist</span>
+                        </a>
+                    </div>
+                    
+                    <div class="icon-tooltip">
+                        <a href="/cart">
+                        <i class="fas fa-shopping-cart">
+                            <span class="cart-badge" id="cartBadge">3</span>
+                        </i>
+                        <span class="tooltip-text">Cart</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="wishlist-container">
+            <!-- Wishlist Header -->
+            <div class="wishlist-header">
+                <h1><i class="fas fa-heart"></i> My Wishlist</h1>
+                <p>Save your favorite items for later and never miss out on great deals</p>
+            </div>
+
+            <!-- Wishlist Stats -->
+            <div class="wishlist-stats">
+                <div class="stat-item">
+                    <span class="number">5</span>
+                    <span class="label">Items Saved</span>
+                </div>
+                <div class="stat-item">
+                    <span class="number">₹12,450</span>
+                    <span class="label">Total Value</span>
+                </div>
+                <div class="stat-item">
+                    <span class="number">₹2,100</span>
+                    <span class="label">You Save</span>
+                </div>
+            </div>
+
+            <!-- Wishlist Actions -->
+            <div class="wishlist-actions">
+                <div class="wishlist-filters">
+                    <select class="filter-select">
+                        <option>All Items</option>
+                        <option>In Stock</option>
+                        <option>Out of Stock</option>
+                        <option>On Sale</option>
+                    </select>
+                    <select class="filter-select">
+                        <option>Sort by Date Added</option>
+                        <option>Sort by Price (Low to High)</option>
+                        <option>Sort by Price (High to Low)</option>
+                        <option>Sort by Name</option>
+                    </select>
+                </div>
+                <div>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-share"></i> Share Wishlist
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-shopping-cart"></i> Add All to Cart
+                    </button>
+                </div>
+            </div>
+
+            <!-- Wishlist Items Grid -->
+            <div class="wishlist-grid">
+                <!-- Wishlist Item 1 -->
+                <div class="wishlist-item">
+                    <div class="date-added">Added 2 days ago</div>
+                    <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400" alt="Nike Air Max">
+                    <div class="wishlist-item-content">
+                        <div class="brand">Nike</div>
+                        <h3>Air Max 270 React</h3>
+                        <div class="stock-status in-stock">In Stock</div>
+                        <div class="price">
+                            ₹8,999
+                            <span class="original-price">₹12,999</span>
+                            <span class="discount">31% OFF</span>
+                        </div>
+                        <div class="wishlist-item-actions">
+                            <button class="btn btn-primary">Add to Cart</button>
+                            <button class="btn-remove">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wishlist Item 2 -->
+                <div class="wishlist-item">
+                    <div class="date-added">Added 1 week ago</div>
+                    <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400" alt="Apple Watch">
+                    <div class="wishlist-item-content">
+                        <div class="brand">Apple</div>
+                        <h3>Watch Series 9 GPS</h3>
+                        <div class="stock-status low-stock">Only 2 left</div>
+                        <div class="price">
+                            ₹41,900
+                            <span class="original-price">₹45,900</span>
+                            <span class="discount">9% OFF</span>
+                        </div>
+                        <div class="wishlist-item-actions">
+                            <button class="btn btn-primary">Add to Cart</button>
+                            <button class="btn-remove">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wishlist Item 3 -->
+                <div class="wishlist-item">
+                    <div class="date-added">Added 3 days ago</div>
+                    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400" alt="Headphones">
+                    <div class="wishlist-item-content">
+                        <div class="brand">Sony</div>
+                        <h3>WH-1000XM4 Wireless Headphones</h3>
+                        <div class="stock-status in-stock">In Stock</div>
+                        <div class="price">
+                            ₹24,990
+                            <span class="original-price">₹29,990</span>
+                            <span class="discount">17% OFF</span>
+                        </div>
+                        <div class="wishlist-item-actions">
+                            <button class="btn btn-primary">Add to Cart</button>
+                            <button class="btn-remove">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wishlist Item 4 -->
+                <div class="wishlist-item">
+                    <div class="date-added">Added 5 days ago</div>
+                    <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400" alt="Backpack">
+                    <div class="wishlist-item-content">
+                        <div class="brand">Herschel</div>
+                        <h3>Little America Backpack</h3>
+                        <div class="stock-status out-of-stock">Out of Stock</div>
+                        <div class="price">
+                            ₹7,999
+                        </div>
+                        <div class="wishlist-item-actions">
+                            <button class="btn btn-secondary" disabled>Notify When Available</button>
+                            <button class="btn-remove">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wishlist Item 5 -->
+                <div class="wishlist-item">
+                    <div class="date-added">Added 1 day ago</div>
+                    <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400" alt="Sunglasses">
+                    <div class="wishlist-item-content">
+                        <div class="brand">Ray-Ban</div>
+                        <h3>Aviator Classic Sunglasses</h3>
+                        <div class="stock-status in-stock">In Stock</div>
+                        <div class="price">
+                            ₹12,990
+                            <span class="original-price">₹15,990</span>
+                            <span class="discount">19% OFF</span>
+                        </div>
+                        <div class="wishlist-item-actions">
+                            <button class="btn btn-primary">Add to Cart</button>
+                            <button class="btn-remove">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Products Section -->
+            <section class="related-section">
+                <h2>You Might Also Like</h2>
+                <div class="product-grid">
+                    <div class="product-card">
+                        <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400" alt="Suggested Product">
+                        <div class="product-info">
+                            <h3>Premium Leather Jacket</h3>
+                            <div class="price">₹15,999</div>
+                            <button class="btn btn-primary">Add to Wishlist</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400" alt="Suggested Product">
+                        <div class="product-info">
+                            <h3>Designer Handbag</h3>
+                            <div class="price">₹22,500</div>
+                            <button class="btn btn-primary">Add to Wishlist</button>
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400" alt="Suggested Product">
+                        <div class="product-info">
+                            <h3>Smart Fitness Tracker</h3>
+                            <div class="price">₹8,999</div>
+                            <button class="btn btn-primary">Add to Wishlist</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>LuxeShop</h3>
+                <p>Your premium destination for luxury shopping. Quality products, exceptional service.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('shop') }}">Shop</a></li>
+                    <li><a href="{{ url_for('about') }}">About Us</a></li>
+                    <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Customer Service</h4>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">Shipping Info</a></li>
+                    <li><a href="#">Size Guide</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Account</h4>
+                <ul>
+                    <li><a href="{{ url_for('user') }}">My Account</a></li>
+                    <li><a href="{{ url_for('wishlist') }}">Wishlist</a></li>
+                    <li><a href="{{ url_for('cart') }}">Shopping Cart</a></li>
+                    <li><a href="#">Order History</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 LuxeShop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Navigation Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navMenu = document.querySelector('.nav-menu');
+
+            if (mobileToggle) {
+                mobileToggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+            }
+
+            // Close mobile menu when clicking on a link
+            const navLinks = document.querySelectorAll('.nav-menu a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileToggle.classList.remove('active');
+                    navMenu.classList.remove('active');
+                });
+            });
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(event) {
+                const isClickInsideNav = navMenu.contains(event.target);
+                const isClickOnToggle = mobileToggle.contains(event.target);
+                
+                if (!isClickInsideNav && !isClickOnToggle && navMenu.classList.contains('active')) {
+                    mobileToggle.classList.remove('active');
+                    navMenu.classList.remove('active');
+                }
+            });
+
+        // Wishlist functionality
+            // Remove item from wishlist
+            const removeButtons = document.querySelectorAll('.btn-remove');
+            removeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = this.closest('.wishlist-item');
+                    if (confirm('Are you sure you want to remove this item from your wishlist?')) {
+                        item.style.opacity = '0';
+                        item.style.transform = 'scale(0.8)';
+                        setTimeout(() => {
+                            item.remove();
+                            updateWishlistStats();
+                        }, 300);
+                    }
+                });
+            });
+
+            // Add to cart functionality
+            const addToCartButtons = document.querySelectorAll('.wishlist-item-actions .btn-primary');
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = this.closest('.wishlist-item');
+                    const itemName = item.querySelector('h3').textContent;
+                    
+                    // Add animation
+                    this.innerHTML = '<i class="fas fa-check"></i> Added!';
+                    this.style.background = '#27ae60';
+                    
+                    setTimeout(() => {
+                        this.innerHTML = 'Add to Cart';
+                        this.style.background = '';
+                    }, 2000);
+                    
+                    // Show notification
+                    showNotification(`${itemName} added to cart!`);
+                });
+            });
+
+            // Filter functionality
+            const filterSelects = document.querySelectorAll('.filter-select');
+            filterSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    // Add filter logic here
+                    console.log('Filter changed:', this.value);
+                });
+            });
+
+            // Share wishlist
+            const shareButton = document.querySelector('.btn-secondary');
+            if (shareButton) {
+                shareButton.addEventListener('click', function() {
+                    if (navigator.share) {
+                        navigator.share({
+                            title: 'My LuxeShop Wishlist',
+                            text: 'Check out my wishlist on LuxeShop!',
+                            url: window.location.href
+                        });
+                    } else {
+                        // Fallback for browsers that don't support Web Share API
+                        const url = window.location.href;
+                        navigator.clipboard.writeText(url).then(() => {
+                            showNotification('Wishlist link copied to clipboard!');
+                        });
+                    }
+                });
+            }
+
+            // Add all to cart
+            const addAllButton = document.querySelector('.wishlist-actions .btn-primary');
+            if (addAllButton) {
+                addAllButton.addEventListener('click', function() {
+                    const availableItems = document.querySelectorAll('.wishlist-item .stock-status.in-stock, .wishlist-item .stock-status.low-stock');
+                    if (availableItems.length > 0) {
+                        showNotification(`${availableItems.length} items added to cart!`);
+                    }
+                });
+            }
+        });
+
+        function updateWishlistStats() {
+            const items = document.querySelectorAll('.wishlist-item');
+            const itemCount = items.length;
+            
+            // Update stats
+            document.querySelector('.stat-item .number').textContent = itemCount;
+            
+            // Update navigation badge
+            const badge = document.querySelector('.nav-icon .badge');
+            if (badge) {
+                badge.textContent = itemCount;
+            }
+        }
+
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--primary);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 5px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                z-index: 10000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

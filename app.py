@@ -105,6 +105,11 @@ def user():
     """Serve the user page"""
     return render_template('user.html')    
 
+@app.route('/wishlist')
+def wishlist():
+    """Serve the wishlist page"""
+    return render_template('wishlist.html')
+
 @app.route('/cart')
 def cart():
     """Serve the cart page"""

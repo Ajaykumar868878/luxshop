@@ -90,6 +90,54 @@
             color: var(--secondary);
         }
         
+        /* Icon Tooltip Styles */
+        .icon-tooltip {
+            position: relative;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .icon-tooltip:hover {
+            transform: translateY(-3px);
+        }
+        
+        .icon-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 80px;
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px 0;
+            font-size: 12px;
+            font-weight: 500;
+            position: absolute;
+            z-index: 1000;
+            top: 125%;
+            left: 50%;
+            margin-left: -40px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .icon-tooltip .tooltip-text::after {
+            content: "";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent var(--primary) transparent;
+        }
+        
+        .icon-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(5px);
+        }
+        
         .search-container {
             position: relative;
             display: flex;
@@ -550,15 +598,31 @@
                     
                 </div>
                 <div class="icons">
+                    <a href="/user" class="icon-tooltip">
+                        <i class="fas fa-user"></i>
+                        <span class="tooltip-text">Profile</span>
+                    </a>
                     
+                    <div class="icon-tooltip">
+                        <a href="/wishlist">
+                        <i class="fas fa-heart"></i>
+                        <span class="tooltip-text">Wishlist</span>
+                        </a>
+                    </div>
                     
-                    <a href="/user"><i class="fas fa-user"></i></a>
-                    <a href="/cart"><i class="fas fa-shopping-cart"></i></a>
+                    <div class="icon-tooltip">
+                        <a href="/cart">
+                        <i class="fas fa-shopping-cart">
+                            
+                        </i>
+                        <span class="tooltip-text">Cart</span>
+                        </a>
+                    </div>
                 </div>
             </nav>
         </div>
     </header>
-    
+
     <section class="hero">
         <div class="hero-content">
             <h1>Contact Us</h1>
