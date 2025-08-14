@@ -100,6 +100,11 @@ def contact():
     """Serve the contact page"""
     return render_template('contact.html')
 
+@app.route('/user')
+def user():
+    """Serve the user page"""
+    return render_template('user.html')    
+
 @app.route('/cart')
 def cart():
     """Serve the cart page"""

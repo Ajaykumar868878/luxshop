@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | LuxeShop</title>
+    <style>
+        /* Global Styles */
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .logo span {
+            color: var(--secondary);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--secondary);
+        }
+        
+        .icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .icons i {
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .icons i:hover {
+            color: var(--secondary);
+        }
+        
+        /* Auth Buttons */
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .auth-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .login-btn {
+            color: var(--primary);
+            background-color: transparent;
+        }
+        
+        .login-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .signup-btn {
+            background-color: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+        
+        .signup-btn:hover {
+            background-color: #c0392b;
+            border-color: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        /* Profile Page Styles */
+        .profile-section {
+            padding: 60px 0;
+            min-height: 80vh;
+        }
+        
+        .profile-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .profile-header h1 {
+            font-size: 36px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .profile-header p {
+            font-size: 18px;
+            color: #7f8c8d;
+        }
+        
+        .profile-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Sidebar Navigation */
+        .profile-sidebar {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            height: fit-content;
+        }
+        
+        .profile-nav {
+            list-style: none;
+        }
+        
+        .profile-nav li {
+            margin-bottom: 15px;
+        }
+        
+        .profile-nav a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: var(--dark);
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .profile-nav a:hover,
+        .profile-nav a.active {
+            background-color: var(--secondary);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .profile-nav i {
+            margin-right: 15px;
+            width: 20px;
+        }
+        
+        /* Profile Content */
+        .profile-content {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 40px;
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .section-title {
+            font-size: 28px;
+            color: var(--primary);
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 15px;
+        }
+        
+        /* Profile Info Form */
+        .profile-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+        
+        .btn {
+            background-color: var(--secondary);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Order History */
+        .order-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: box-shadow 0.3s;
+        }
+        
+        .order-card:hover {
+            box-shadow: var(--shadow);
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .order-id {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .order-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-delivered {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .status-processing {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .status-shipped {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .order-items {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .item-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+        
+        .order-total {
+            text-align: right;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+        
+        /* Footer Styles */
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 50px 0 20px;
+            margin-top: 80px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            position: relative;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 30px;
+            height: 2px;
+            background-color: var(--secondary);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column ul li a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--secondary);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background-color: var(--secondary);
+            color: white;
+            text-align: center;
+            line-height: 40px;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        
+        .social-links a:hover {
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .profile-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .navbar {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+    <!-- Using Font Awesome for icons (loaded via CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="/" class="logo">Luxe<span>Shop</span></a>
+                <div class="nav-links">
+                    <a href="/">Home</a>
+                    <a href="/shop">Shop</a>
+                    <a href="/about">About</a>
+                    <a href="/contact">Contact</a>
+                </div>
+                <div class="icons">
+                    <div class="auth-buttons">
+                        <a href="/login" class="auth-btn login-btn">Login</a>
+                        <a href="/signup" class="auth-btn signup-btn">Sign Up</a>
+                    </div>
+                    
+                    <a href="/user"><i class="fas fa-user"></i></a>
+                    <a href="/cart"><i class="fas fa-shopping-cart"></i></a>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Profile Section -->
+    <section class="profile-section">
+        <div class="container">
+            <div class="profile-header">
+                <h1>My Profile</h1>
+                <p>Manage your account information and preferences</p>
+            </div>
+            
+            <div class="profile-container">
+                <!-- Sidebar Navigation -->
+                <div class="profile-sidebar">
+                    <ul class="profile-nav">
+                        <li><a href="#" class="nav-link active" data-section="profile-info"><i class="fas fa-user"></i>Profile Information</a></li>
+                        <li><a href="#" class="nav-link" data-section="order-history"><i class="fas fa-box"></i>Order History</a></li>
+                        <li><a href="#" class="nav-link" data-section="addresses"><i class="fas fa-map-marker-alt"></i>Addresses</a></li>
+                        <li><a href="#" class="nav-link" data-section="settings"><i class="fas fa-cog"></i>Account Settings</a></li>
+                        <li><a href="/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Profile Content -->
+                <div class="profile-content">
+                    <!-- Profile Information Section -->
+                    <div class="content-section active" id="profile-info">
+                        <h2 class="section-title">Profile Information</h2>
+                        <form class="profile-form">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" id="firstName" name="firstName" value="John">
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" id="lastName" name="lastName" value="Doe">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" value="john.doe@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" value="+1 (555) 123-4567">
+                            </div>
+                            <div class="form-group">
+                                <label for="birthdate">Date of Birth</label>
+                                <input type="date" id="birthdate" name="birthdate" value="1990-01-15">
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select id="gender" name="gender">
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                    <option value="prefer-not-to-say">Prefer not to say</option>
+                                </select>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="bio">Bio</label>
+                                <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself...">Fashion enthusiast and style lover. Always looking for the latest trends and timeless pieces.</textarea>
+                            </div>
+                            <button type="submit" class="btn">Update Profile</button>
+                        </form>
+                    </div>
+                    
+                    <!-- Order History Section -->
+                    <div class="content-section" id="order-history">
+                        <h2 class="section-title">Order History</h2>
+                        
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div class="order-id">#ORD-2023-001</div>
+                                <div class="order-status status-delivered">Delivered</div>
+                            </div>
+                            <div class="order-items">
+                                <div class="order-item">
+                                    <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Product" class="item-image">
+                                    <div>
+                                        <div>Summer Dress</div>
+                                        <div>Qty: 1</div>
+                                    </div>
+                                </div>
+                                <div class="order-item">
+                                    <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Product" class="item-image">
+                                    <div>
+                                        <div>Classic Sneakers</div>
+                                        <div>Qty: 1</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="order-total">Total: $145.50</div>
+                            <div style="margin-top: 10px; color: #7f8c8d; font-size: 14px;">
+                                Ordered: March 15, 2023 | Delivered: March 20, 2023
+                            </div>
+                        </div>
+                        
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div class="order-id">#ORD-2023-002</div>
+                                <div class="order-status status-shipped">Shipped</div>
+                            </div>
+                            <div class="order-items">
+                                <div class="order-item">
+                                    <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Product" class="item-image">
+                                    <div>
+                                        <div>Leather Bag</div>
+                                        <div>Qty: 1</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="order-total">Total: $75.00</div>
+                            <div style="margin-top: 10px; color: #7f8c8d; font-size: 14px;">
+                                Ordered: March 25, 2023 | Expected: March 30, 2023
+                            </div>
+                        </div>
+                        
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div class="order-id">#ORD-2023-003</div>
+                                <div class="order-status status-processing">Processing</div>
+                            </div>
+                            <div class="order-items">
+                                <div class="order-item">
+                                    <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Product" class="item-image">
+                                    <div>
+                                        <div>Minimalist Watch</div>
+                                        <div>Qty: 1</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="order-total">Total: $120.00</div>
+                            <div style="margin-top: 10px; color: #7f8c8d; font-size: 14px;">
+                                Ordered: March 28, 2023 | Processing
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Addresses Section -->
+                    <div class="content-section" id="addresses">
+                        <h2 class="section-title">My Addresses</h2>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                            <div style="border: 2px solid #e74c3c; border-radius: 10px; padding: 20px; position: relative; background-color: #fef9f9;">
+                                <div style="position: absolute; top: 10px; right: 10px; background-color: #e74c3c; color: white; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 600;">Default</div>
+                                <div style="font-weight: 700; color: #2c3e50; margin-bottom: 10px;">Home</div>
+                                <div>
+                                    <div>John Doe</div>
+                                    <div>123 Fashion Street</div>
+                                    <div>New York, NY 10001</div>
+                                    <div>United States</div>
+                                    <div>Phone: +1 (555) 123-4567</div>
+                                </div>
+                                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                                    <button class="btn" style="padding: 6px 12px; font-size: 12px; border-radius: 15px; margin-top: 0;">Edit</button>
+                                    <button class="btn" style="padding: 6px 12px; font-size: 12px; border-radius: 15px; margin-top: 0; background-color: transparent; color: #2c3e50; border: 1px solid #2c3e50;">Remove</button>
+                                </div>
+                            </div>
+                            
+                            <div style="border: 2px solid #ddd; border-radius: 10px; padding: 20px; position: relative; transition: all 0.3s;">
+                                <div style="font-weight: 700; color: #2c3e50; margin-bottom: 10px;">Office</div>
+                                <div>
+                                    <div>John Doe</div>
+                                    <div>456 Business Ave</div>
+                                    <div>Suite 200</div>
+                                    <div>New York, NY 10002</div>
+                                    <div>United States</div>
+                                    <div>Phone: +1 (555) 987-6543</div>
+                                </div>
+                                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                                    <button class="btn" style="padding: 6px 12px; font-size: 12px; border-radius: 15px; margin-top: 0;">Edit</button>
+                                    <button class="btn" style="padding: 6px 12px; font-size: 12px; border-radius: 15px; margin-top: 0; background-color: transparent; color: #2c3e50; border: 1px solid #2c3e50;">Remove</button>
+                                    <button class="btn" style="padding: 6px 12px; font-size: 12px; border-radius: 15px; margin-top: 0; background-color: transparent; color: #2c3e50; border: 1px solid #2c3e50;">Set as Default</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn" style="margin-top: 30px;">Add New Address</button>
+                    </div>
+                    
+                    <!-- Account Settings Section -->
+                    <div class="content-section" id="settings">
+                        <h2 class="section-title">Account Settings</h2>
+                        
+                        <div style="margin-bottom: 40px;">
+                            <h3 style="margin-bottom: 20px; color: #2c3e50;">Password & Security</h3>
+                            <form class="profile-form">
+                                <div class="form-group">
+                                    <label for="currentPassword">Current Password</label>
+                                    <input type="password" id="currentPassword" name="currentPassword">
+                                </div>
+                                <div class="form-group">
+                                    <label for="newPassword">New Password</label>
+                                    <input type="password" id="newPassword" name="newPassword">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label for="confirmPassword">Confirm New Password</label>
+                                    <input type="password" id="confirmPassword" name="confirmPassword">
+                                </div>
+                                <button type="submit" class="btn">Update Password</button>
+                            </form>
+                        </div>
+                        
+                        <div>
+                            <h3 style="margin-bottom: 20px; color: #2c3e50;">Preferences</h3>
+                            <form class="profile-form">
+                                <div class="form-group">
+                                    <label for="newsletter">
+                                        <input type="checkbox" id="newsletter" name="newsletter" checked style="margin-right: 10px;">
+                                        Subscribe to newsletter
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="notifications">
+                                        <input type="checkbox" id="notifications" name="notifications" checked style="margin-right: 10px;">
+                                        Email notifications
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sms">
+                                        <input type="checkbox" id="sms" name="sms" style="margin-right: 10px;">
+                                        SMS notifications
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn">Save Preferences</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>LuxeShop</h3>
+                    <p>Premium fashion for the modern lifestyle. Quality products at affordable prices.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/shop">Shop</a></li>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Customer Service</h3>
+                    <ul>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Shipping Policy</a></li>
+                        <li><a href="#">Return Policy</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Fashion St, New York</li>
+                        <li><i class="fas fa-phone"></i> (123) 456-7890</li>
+                        <li><i class="fas fa-envelope"></i> info@luxeshop.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 LuxeShop. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // JavaScript for tab navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Don't handle logout link
+                    if (this.getAttribute('href') === '/logout') {
+                        return;
+                    }
+                    
+                    // Remove active class from all nav links
+                    navLinks.forEach(navLink => navLink.classList.remove('active'));
+                    
+                    // Add active class to clicked nav link
+                    this.classList.add('active');
+                    
+                    // Hide all content sections
+                    contentSections.forEach(section => section.classList.remove('active'));
+                    
+                    // Show target content section
+                    const targetSection = this.getAttribute('data-section');
+                    document.getElementById(targetSection).classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
