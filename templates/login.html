@@ -266,25 +266,47 @@
         
         .form-group input {
             width: 100%;
-            padding: 15px 20px;
+            padding: 15px;
             border: 2px solid #e1e8ed;
             border-radius: 12px;
             font-size: 16px;
             transition: all 0.3s ease;
-            background-color: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(5px);
+            background-color: #f8f9fa;
         }
         
         .form-group input:focus {
             outline: none;
             border-color: var(--secondary);
-            box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.15);
-            transform: translateY(-2px);
             background-color: white;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
         }
         
         .form-group input::placeholder {
             color: #95a5a6;
+        }
+        
+        /* Password input with eye icon */
+        .password-container {
+            position: relative;
+        }
+        
+        .password-container input {
+            padding-right: 50px;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #7f8c8d;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+        
+        .password-toggle:hover {
+            color: var(--secondary);
         }
         
         .login-btn {
@@ -682,7 +704,10 @@
                 
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <i class="fas fa-eye password-toggle" id="togglePassword" title="Show/Hide Password"></i>
+                    </div>
                 </div>
                 
                 <button type="submit" class="login-btn">Sign In</button>
@@ -751,6 +776,19 @@
                 console.error('Error:', error);
                 alert('An error occurred. Please try again.');
             });
+        });
+        
+        // Password toggle functionality
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Toggle eye icon
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
         });
         
         // Social login buttons
