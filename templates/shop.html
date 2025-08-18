@@ -323,6 +323,26 @@
             border-radius: 15px;
             font-size: 12px;
             font-weight: 600;
+            z-index: 5;
+        }
+
+        .wishlist-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            color: #ccc; /* Light grey for inactive solid heart */
+            cursor: pointer;
+            transition: color 0.3s, transform 0.3s;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .wishlist-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .wishlist-icon.active {
+            color: #ff0000; /* Red when active */
         }
         
         .product-info {
@@ -641,9 +661,10 @@
                 <a href="#" class="view-all">View All Shirts →</a>
             </div>
             <div class="products">
-                <div class="product-card">
+                <div class="product-card" data-product-id="101">
                     <div class="product-img">
                         <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Classic White Shirt">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <span class="product-badge">New</span>
                     </div>
                     <div class="product-info">
@@ -657,9 +678,10 @@
                     </div>
                 </div>
                 
-                <div class="product-card">
+                <div class="product-card" data-product-id="102">
                     <div class="product-img">
                         <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Denim Shirt">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <span class="product-badge">Sale</span>
                     </div>
                     <div class="product-info">
@@ -673,8 +695,9 @@
                     </div>
                 </div>
                 
-                <div class="product-card">
+                <div class="product-card" data-product-id="103">
                     <div class="product-img">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Polo Shirt">
                     </div>
                     <div class="product-info">
@@ -688,8 +711,9 @@
                     </div>
                 </div>
                 
-                <div class="product-card">
+                <div class="product-card" data-product-id="104">
                     <div class="product-img">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <img src="https://images.unsplash.com/photo-1581655353564-df123a1eb820?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Oxford Shirt">
                     </div>
                     <div class="product-info">
@@ -712,9 +736,10 @@
                 <a href="#" class="view-all">View All Pants →</a>
             </div>
             <div class="products">
-                <div class="product-card">
+                <div class="product-card" data-product-id="201">
                     <div class="product-img">
                         <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Slim Fit Jeans">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <span class="product-badge">Popular</span>
                     </div>
                     <div class="product-info">
@@ -728,8 +753,9 @@
                     </div>
                 </div>
                 
-                <div class="product-card">
+                <div class="product-card" data-product-id="202">
                     <div class="product-img">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <img src="https://images.unsplash.com/photo-1473966968600-fa801b869a1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Chino Pants">
                     </div>
                     <div class="product-info">
@@ -743,9 +769,10 @@
                     </div>
                 </div>
                 
-                <div class="product-card">
+                <div class="product-card" data-product-id="203">
                     <div class="product-img">
                         <img src="https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Cargo Pants">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <span class="product-badge">New</span>
                     </div>
                     <div class="product-info">
@@ -759,8 +786,9 @@
                     </div>
                 </div>
                 
-                <div class="product-card">
+                <div class="product-card" data-product-id="204">
                     <div class="product-img">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <img src="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Dress Pants">
                     </div>
                     <div class="product-info">
@@ -783,9 +811,10 @@
                 <a href="#" class="view-all">View All Shoes →</a>
             </div>
             <div class="products">
-                <div class="product-card">
+                <div class="product-card" data-product-id="301">
                     <div class="product-img">
                         <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="White Sneakers">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <span class="product-badge">Best Seller</span>
                     </div>
                     <div class="product-info">
@@ -799,8 +828,9 @@
                     </div>
                 </div>
                 
-                <div class="product-card">
+                <div class="product-card" data-product-id="302">
                     <div class="product-img">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <img src="https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Leather Boots">
                     </div>
                     <div class="product-info">
@@ -814,9 +844,10 @@
                     </div>
                 </div>
                 
-                <div class="product-card">
+                <div class="product-card" data-product-id="303">
                     <div class="product-img">
                         <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Running Shoes">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <span class="product-badge">New</span>
                     </div>
                     <div class="product-info">
@@ -830,8 +861,9 @@
                     </div>
                 </div>
                 
-                <div class="product-card">
+                <div class="product-card" data-product-id="304">
                     <div class="product-img">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Casual Loafers">
                     </div>
                     <div class="product-info">
@@ -854,9 +886,10 @@
                 <a href="#" class="view-all">View All Accessories →</a>
             </div>
             <div class="products">
-                <div class="product-card">
+                <div class="product-card" data-product-id="401">
                     <div class="product-img">
                         <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Leather Watch">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <span class="product-badge">Premium</span>
                     </div>
                     <div class="product-info">
@@ -870,8 +903,9 @@
                     </div>
                 </div>
                 
-                <div class="product-card">
+                <div class="product-card" data-product-id="402">
                     <div class="product-img">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Leather Bag">
                     </div>
                     <div class="product-info">
@@ -885,9 +919,10 @@
                     </div>
                 </div>
                 
-                <div class="product-card">
+                <div class="product-card" data-product-id="403">
                     <div class="product-img">
                         <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Sunglasses">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <span class="product-badge">Trending</span>
                     </div>
                     <div class="product-info">
@@ -901,7 +936,7 @@
                     </div>
                 </div>
                 
-                <div class="product-card">
+                <div class="product-card" data-product-id="404">
                     <div class="product-img">
                         <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Leather Belt">
                     </div>
@@ -925,9 +960,10 @@
                 <a href="#" class="view-all">View All Dresses →</a>
             </div>
             <div class="products">
-                <div class="product-card">
+                <div class="product-card" data-product-id="501">
                     <div class="product-img">
                         <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Summer Dress">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <span class="product-badge">New</span>
                     </div>
                     <div class="product-info">
@@ -941,9 +977,10 @@
                     </div>
                 </div>
                 
-                <div class="product-card">
+                <div class="product-card" data-product-id="502">
                     <div class="product-img">
                         <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Evening Gown">
+                        <i class="fas fa-heart wishlist-icon"></i>
                         <span class="product-badge">Premium</span>
                     </div>
                     <div class="product-info">
@@ -957,7 +994,7 @@
                     </div>
                 </div>
                 
-                <div class="product-card">
+                <div class="product-card" data-product-id="503">
                     <div class="product-img">
                         <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Casual Dress">
                     </div>
@@ -972,7 +1009,7 @@
                     </div>
                 </div>
                 
-                <div class="product-card">
+                <div class="product-card" data-product-id="504">
                     <div class="product-img">
                         <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Cocktail Dress">
                     </div>
@@ -1147,6 +1184,91 @@
                 performSearch();
                 sessionStorage.removeItem('searchTerm');
             }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let userWishlist = [];
+
+            // Function to update the visual state of wishlist icons
+            function updateWishlistIcons() {
+                document.querySelectorAll('.product-card').forEach(card => {
+                    const productId = card.dataset.productId;
+                    const icon = card.querySelector('.wishlist-icon');
+                    if (userWishlist.includes(parseInt(productId))) {
+                        icon.classList.add('active');
+                    } else {
+                        icon.classList.remove('active');
+                    }
+                });
+            }
+
+            // Fetch the user's wishlist on page load
+            async function fetchWishlist() {
+                try {
+                    const response = await fetch('/api/wishlist');
+                    const data = await response.json();
+                    if (data.success) {
+                        userWishlist = data.wishlist;
+                        updateWishlistIcons();
+                    } else if (response.status !== 401) {
+                        console.error('Failed to fetch wishlist:', data.errors);
+                    }
+                } catch (error) {
+                    console.error('Error fetching wishlist:', error);
+                }
+            }
+
+            // Function to handle adding/removing from wishlist
+            async function toggleWishlist(productId, icon) {
+                const isInWishlist = userWishlist.includes(parseInt(productId));
+                const url = isInWishlist ? '/api/wishlist/remove' : '/api/wishlist/add';
+                
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ product_id: parseInt(productId) })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.status === 401) {
+                        // Redirect to login if not authenticated
+                        window.location.href = '/login';
+                        return;
+                    }
+
+                    if (data.success) {
+                        // Update the local wishlist state and icon
+                        if (isInWishlist) {
+                            userWishlist = userWishlist.filter(id => id !== parseInt(productId));
+                        } else {
+                            userWishlist.push(parseInt(productId));
+                        }
+                        updateWishlistIcons();
+                    } else {
+                        console.error('Failed to update wishlist:', data.errors);
+                    }
+                } catch (error) {
+                    console.error('Error updating wishlist:', error);
+                }
+            }
+
+            // Add click listeners to wishlist icons
+            document.querySelectorAll('.wishlist-icon').forEach(icon => {
+                icon.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const productId = this.closest('.product-card').dataset.productId;
+                    toggleWishlist(productId, this);
+                });
+            });
+
+            // Initial fetch of the wishlist
+            fetchWishlist();
         });
     </script>
 </body>

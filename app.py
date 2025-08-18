@@ -106,8 +106,35 @@ def user():
 
 @app.route('/wishlist')
 def wishlist():
-    """Serve the wishlist page"""
-    return render_template('wishlist.html')
+    """Serve the wishlist page with the user's items"""
+    if 'user_id' not in session:
+        flash('Please log in to view your wishlist.', 'info')
+        return redirect(url_for('login_page'))
+
+    try:
+        user_id = session['user_id']
+        
+        # Get product IDs from user's wishlist
+        wishlist_response = supabase.table('wishlist').select('product_id').eq('user_id', user_id).execute()
+        
+        if not wishlist_response.data:
+            # Render wishlist with no items if it's empty
+            return render_template('wishlist.html', wishlist_items=[])
+
+        product_ids = [item['product_id'] for item in wishlist_response.data]
+        
+        # Fetch product details for the wishlist items
+        # This assumes you have a 'products' table with product details
+        products_response = supabase.table('products').select('*').in_('id', product_ids).execute()
+        
+        wishlist_items = products_response.data if products_response.data else []
+            
+        return render_template('wishlist.html', wishlist_items=wishlist_items)
+
+    except Exception as e:
+        app.logger.error(f"Error fetching wishlist page: {str(e)}", exc_info=True)
+        flash('An error occurred while fetching your wishlist.', 'danger')
+        return render_template('wishlist.html', wishlist_items=[])
 
 @app.route('/cart')
 def cart():
@@ -282,6 +309,100 @@ def get_user():
         })
     else:
         return jsonify({'logged_in': False})
+
+@app.route('/api/wishlist', methods=['GET'])
+def get_wishlist():
+    """Get all items in the user's wishlist"""
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'errors': ['Authentication required.']}), 401
+
+    try:
+        user_id = session['user_id']
+        # Fetch wishlist items for the current user from Supabase
+        response = supabase.table('wishlist').select('product_id').eq('user_id', user_id).execute()
+        
+        if hasattr(response, 'data'):
+            product_ids = [item['product_id'] for item in response.data]
+            return jsonify({'success': True, 'wishlist': product_ids})
+        return jsonify({'success': True, 'wishlist': []})
+
+    except Exception as e:
+        app.logger.error(f"Error fetching wishlist: {str(e)}")
+        return jsonify({'success': False, 'errors': ['Could not retrieve wishlist.']}), 500
+
+@app.route('/api/wishlist/add', methods=['POST'])
+def add_to_wishlist():
+    """Add an item to the user's wishlist"""
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'errors': ['Authentication required.']}), 401
+
+    try:
+        data = request.get_json()
+        product_id = data.get('product_id')
+
+        if not product_id:
+            return jsonify({'success': False, 'errors': ['Product ID is required.']}), 400
+
+        user_id = session['user_id']
+        
+        # Check if item already exists in wishlist
+        existing = supabase.table('wishlist')\
+            .select('*')\
+            .eq('user_id', user_id)\
+            .eq('product_id', product_id)\
+            .execute()
+            
+        if existing.data:
+            return jsonify({'success': False, 'errors': ['Item already in wishlist.']}), 409
+            
+        # Add to wishlist
+        insert_data = {
+            'user_id': user_id,
+            'product_id': product_id,
+            'created_at': datetime.utcnow().isoformat()
+        }
+        
+        result = supabase.table('wishlist').insert(insert_data).execute()
+        
+        if hasattr(result, 'data') and result.data:
+            return jsonify({'success': True, 'message': 'Item added to wishlist.'})
+            
+        return jsonify({'success': False, 'errors': ['Failed to add item to wishlist.']}), 500
+
+    except Exception as e:
+        app.logger.error(f"Error adding to wishlist: {str(e)}")
+        return jsonify({'success': False, 'errors': ['Could not add item to wishlist.']}), 500
+
+@app.route('/api/wishlist/remove', methods=['POST'])
+def remove_from_wishlist():
+    """Remove an item from the user's wishlist"""
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'errors': ['Authentication required.']}), 401
+
+    try:
+        data = request.get_json()
+        product_id = data.get('product_id')
+
+        if not product_id:
+            return jsonify({'success': False, 'errors': ['Product ID is required.']}), 400
+
+        user_id = session['user_id']
+        
+        # Delete the item from wishlist
+        result = supabase.table('wishlist')\
+            .delete()\
+            .eq('user_id', user_id)\
+            .eq('product_id', product_id)\
+            .execute()
+
+        if hasattr(result, 'data') and result.data:
+            return jsonify({'success': True, 'message': 'Item removed from wishlist.'})
+            
+        return jsonify({'success': False, 'errors': ['Item not found in wishlist.']}), 404
+
+    except Exception as e:
+        app.logger.error(f"Error removing from wishlist: {str(e)}")
+        return jsonify({'success': False, 'errors': ['Could not remove item from wishlist.']}), 500
 
 @app.route('/api/update_profile', methods=['POST'])
 def update_profile():
