@@ -710,7 +710,10 @@
                     </div>
                 </div>
                 
-                <button type="submit" class="login-btn">Sign In</button>
+                <button type="submit" class="login-btn" id="login-btn">Sign In</button>
+                <div id="loading-spinner" style="display: none; text-align: center; margin-top: 15px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 24px; color: var(--secondary);"></i>
+                </div>
                 
                 <div class="login-footer">
                     <a href="#">Forgot your password?</a>
@@ -746,11 +749,17 @@
             
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const loginButton = document.getElementById('login-btn');
+            const loadingSpinner = document.getElementById('loading-spinner');
             
             if (!email || !password) {
                 alert('Please fill in all fields.');
                 return;
             }
+
+            // Show spinner and disable button
+            loginButton.disabled = true;
+            loadingSpinner.style.display = 'block';
             
             // Send data to Flask backend
             fetch('/api/login', {
@@ -766,8 +775,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Login successful! Welcome to LuxeShop.');
-                    window.location.href = '/';
+                    window.location.href = data.redirect_url || '/';
                 } else {
                     alert('Error: ' + (data.errors ? data.errors.join('\n') : 'Unknown error'));
                 }
@@ -775,6 +783,11 @@
             .catch(error => {
                 console.error('Error:', error);
                 alert('An error occurred. Please try again.');
+            })
+            .finally(() => {
+                // Hide spinner and enable button
+                loginButton.disabled = false;
+                loadingSpinner.style.display = 'none';
             });
         });
         

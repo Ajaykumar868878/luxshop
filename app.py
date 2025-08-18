@@ -11,6 +11,10 @@ from supabase import create_client, Client
 load_dotenv()
 
 app = Flask(__name__)
+
+# Configure logging
+import logging
+logging.basicConfig(level=logging.DEBUG)
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'your-secret-key-change-this-in-production')
 
 # Supabase setup
@@ -19,30 +23,6 @@ SUPABASE_KEY = os.getenv('SUPABASE_ANON_KEY')
 
 # Initialize Supabase client
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-# Database setup (keeping SQLite as fallback)
-DATABASE = 'luxeshop.db'
-
-def init_db():
-    """Initialize the database with users table"""
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-    
-    # Create users table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            first_name TEXT NOT NULL,
-            last_name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            phone TEXT NOT NULL,
-            password_hash TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-    
-    conn.commit()
-    conn.close()
 
 def hash_password(password):
     """Hash password using SHA-256"""
@@ -103,7 +83,26 @@ def contact():
 @app.route('/user')
 def user():
     """Serve the user page"""
-    return render_template('user.html')    
+    if 'user_id' not in session:
+        flash('Please log in to view your profile.', 'info')
+        return redirect(url_for('login_page'))
+
+    try:
+        user_id = session['user_id']
+        result = supabase.table('users').select('*').eq('id', user_id).single().execute()
+        
+        if result.data:
+            user_data = result.data
+            return render_template('user.html', user=user_data)
+        else:
+            flash('Could not retrieve user profile.', 'danger')
+            session.clear()
+            return redirect(url_for('login_page'))
+            
+    except Exception as e:
+        app.logger.error(f"Error fetching user profile: {str(e)}", exc_info=True)
+        flash('An error occurred while fetching your profile.', 'danger')
+        return redirect(url_for('index'))    
 
 @app.route('/wishlist')
 def wishlist():
@@ -168,25 +167,49 @@ def handle_signup():
         if errors:
             return jsonify({'success': False, 'errors': errors}), 400
         
-        # Check if email already exists
-        conn = sqlite3.connect(DATABASE)
-        cursor = conn.cursor()
-        cursor.execute('SELECT id FROM users WHERE email = ?', (email,))
-        if cursor.fetchone():
-            conn.close()
-            return jsonify({'success': False, 'errors': ['Email already registered.']}), 400
+        # Check if email already exists in Supabase
+        try:
+            print(f"DEBUG: Checking if email {email} already exists...")
+            existing_user = supabase.table('users').select('id').eq('email', email).execute()
+            print(f"DEBUG: Existing user check result: {existing_user}")
+            if existing_user.data:
+                print(f"DEBUG: Email {email} already exists")
+                return jsonify({'success': False, 'errors': ['Email already registered.']}), 400
+            print(f"DEBUG: Email {email} is available")
+        except Exception as e:
+            print(f"DEBUG: Error checking existing user: {str(e)}")
+            print(f"DEBUG: Exception type: {type(e).__name__}")
+            return jsonify({'success': False, 'errors': ['Database connection error. Please try again.']}), 500
         
-        # Create new user
+        # Create new user in Supabase
         password_hash = hash_password(password)
-        cursor.execute('''
-            INSERT INTO users (first_name, last_name, email, phone, password_hash)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (first_name, last_name, email, phone, password_hash))
-        
-        conn.commit()
-        conn.close()
-        
-        return jsonify({'success': True, 'message': 'Account created successfully!'})
+        app.logger.debug(f"Creating new user with email: {email}")
+        try:
+            user_data = {
+                'first_name': first_name,
+                'last_name': last_name,
+                'email': email,
+                'phone': phone,
+                'password_hash': password_hash
+            }
+            app.logger.debug(f"User data to insert: {user_data}")
+            
+            result = supabase.table('users').insert(user_data).execute()
+            app.logger.debug(f"Insert result: {result}")
+            app.logger.debug(f"Insert result data: {result.data}")
+            app.logger.debug(f"Insert result count: {result.count}")
+            
+            if result.data:
+                app.logger.debug(f"User created successfully: {result.data}")
+                return jsonify({'success': True, 'message': 'Account created successfully!'})
+            else:
+                app.logger.debug(f"Insert failed - no data returned")
+                app.logger.debug(f"Full result object: {vars(result)}")
+                return jsonify({'success': False, 'errors': ['Failed to create account. Please try again.']}), 500
+                
+        except Exception as e:
+            app.logger.error(f"Exception during user creation: {str(e)}", exc_info=True)
+            return jsonify({'success': False, 'errors': ['Failed to create account. Please try again.']}), 500
         
     except Exception as e:
         return jsonify({'success': False, 'errors': ['An error occurred. Please try again.']}), 500
@@ -205,32 +228,36 @@ def handle_login():
         if not email or not password:
             return jsonify({'success': False, 'errors': ['Email and password are required.']}), 400
         
-        # Check credentials
-        conn = sqlite3.connect(DATABASE)
-        cursor = conn.cursor()
-        cursor.execute('''
-            SELECT id, first_name, last_name, email, password_hash 
-            FROM users WHERE email = ?
-        ''', (email,))
-        
-        user = cursor.fetchone()
-        conn.close()
-        
-        if not user or user[4] != hash_password(password):
-            return jsonify({'success': False, 'errors': ['Invalid email or password.']}), 401
-        
-        # Create session
-        session['user_id'] = user[0]
-        session['user_name'] = f"{user[1]} {user[2]}"
-        session['user_email'] = user[3]
+        # Check credentials with Supabase
+        try:
+            result = supabase.table('users').select('id, first_name, last_name, email, password_hash').eq('email', email).execute()
+            app.logger.debug(f"Login check for {email}: {result}")
+
+            if not result.data:
+                return jsonify({'success': False, 'errors': ['Invalid email or password.']}), 401
+
+            user = result.data[0]
+            
+            if user['password_hash'] != hash_password(password):
+                return jsonify({'success': False, 'errors': ['Invalid email or password.']}), 401
+
+            # Create session
+            session['user_id'] = user['id']
+            session['user_name'] = f"{user['first_name']} {user['last_name']}"
+            session['user_email'] = user['email']
+
+        except Exception as e:
+            app.logger.error(f"Exception during login: {str(e)}", exc_info=True)
+            return jsonify({'success': False, 'errors': ['An error occurred during login. Please try again.']}), 500
         
         return jsonify({
             'success': True, 
-            'message': 'Login successful!',
+            'message': 'Login successful! Redirecting...',
             'user': {
                 'name': session['user_name'],
                 'email': session['user_email']
-            }
+            },
+            'redirect_url': url_for('index')
         })
         
     except Exception as e:
@@ -256,6 +283,58 @@ def get_user():
     else:
         return jsonify({'logged_in': False})
 
+@app.route('/api/update_profile', methods=['POST'])
+def update_profile():
+    """Handle user profile updates"""
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'errors': ['Authentication required.']}), 401
+
+    try:
+        data = request.get_json()
+        user_id = session['user_id']
+
+        first_name = data.get('first_name', '').strip()
+        last_name = data.get('last_name', '').strip()
+        phone = data.get('phone', '').strip()
+        birthdate = data.get('birthdate')
+        bio = data.get('bio', '').strip()
+
+        errors = []
+        if not first_name:
+            errors.append('First name is required.')
+        if not last_name:
+            errors.append('Last name is required.')
+        if phone and not validate_phone(phone):
+            errors.append('Invalid phone number format.')
+
+        if errors:
+            return jsonify({'success': False, 'errors': errors}), 400
+
+        update_data = {
+            'first_name': first_name,
+            'last_name': last_name,
+            'phone': phone,
+            'birthdate': birthdate,
+            'bio': bio
+        }
+
+        try:
+            result = supabase.table('users').update(update_data).eq('id', user_id).execute()
+
+            if result.data:
+                session['user_name'] = f"{first_name} {last_name}"
+                return jsonify({'success': True, 'message': 'Profile updated successfully!'})
+            else:
+                return jsonify({'success': False, 'errors': ['Failed to update profile. Please try again.']}), 500
+
+        except Exception as e:
+            app.logger.error(f"Exception during profile update: {str(e)}", exc_info=True)
+            return jsonify({'success': False, 'errors': ['An error occurred during the update.']}), 500
+
+    except Exception as e:
+        app.logger.error(f"Exception in update_profile: {str(e)}", exc_info=True)
+        return jsonify({'success': False, 'errors': ['An unexpected error occurred.']}), 500
+
 # Error handlers
 @app.errorhandler(404)
 def not_found(error):
@@ -266,8 +345,5 @@ def internal_error(error):
     return jsonify({'success': False, 'errors': ['Internal server error']}), 500
 
 if __name__ == '__main__':
-    # Initialize database
-    init_db()
-    
     # Run the app
     app.run(debug=True, host='0.0.0.0', port=5000)

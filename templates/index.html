@@ -481,8 +481,12 @@
                 </div>
                 <div class="icons">
                     <div class="auth-buttons">
-                        <a href="/login" class="auth-btn login-btn">Login</a>
-                        <a href="/signup" class="auth-btn signup-btn">Sign Up</a>
+                        <a href="/login" class="auth-btn login-btn" id="login-btn">Login</a>
+                        <a href="/signup" class="auth-btn signup-btn" id="signup-btn">Sign Up</a>
+                        <div id="user-info" style="display: none;">
+                            <a href="/user" id="user-name" class="auth-btn"></a>
+                            <button id="logout-btn" class="auth-btn signup-btn">Logout</button>
+                        </div>
                     </div>
                     
                     <a href="/user" class="icon-tooltip">
@@ -631,5 +635,23 @@
             </div>
         </div>
     </footer>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const response = await fetch('/api/user');
+        const data = await response.json();
+
+        if (data.logged_in) {
+            document.getElementById('login-btn').style.display = 'none';
+            document.getElementById('signup-btn').style.display = 'none';
+            document.getElementById('user-info').style.display = 'block';
+            document.getElementById('user-name').textContent = `Welcome, ${data.user.name}`;
+        }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+        await fetch('/api/logout', { method: 'POST' });
+        window.location.href = '/';
+    });
+</script>
 </body>
 </html>

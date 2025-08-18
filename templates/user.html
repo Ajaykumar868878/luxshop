@@ -566,11 +566,6 @@
                     <a href="/contact">Contact</a>
                 </div>
                 <div class="icons">
-                    <div class="auth-buttons">
-                        <a href="/login" class="auth-btn login-btn">Login</a>
-                        <a href="/signup" class="auth-btn signup-btn">Sign Up</a>
-                    </div>
-                    
                     <a href="/user" class="icon-tooltip">
                         <i class="fas fa-user"></i>
                         <span class="tooltip-text">Profile</span>
@@ -583,10 +578,14 @@
                         </a>
                     </div>
                     
-                    <a href="/cart" class="icon-tooltip">
-                        <i class="fas fa-shopping-cart"></i>
+                    <div class="icon-tooltip">
+                        <a href="/cart">
+                        <i class="fas fa-shopping-cart">
+                            
+                        </i>
                         <span class="tooltip-text">Cart</span>
-                    </a>
+                        </a>
+                    </div>
                 </div>
             </nav>
         </div>
@@ -597,7 +596,7 @@
         <div class="container">
             <div class="profile-header">
                 <h1>My Profile</h1>
-                <p>Manage your account information and preferences</p>
+                <p>Welcome back, {{ user.first_name }}! From your account dashboard, you can view your recent orders, manage your shipping and billing addresses, and edit your password and account details.</p>
             </div>
             
             <div class="profile-container">
@@ -619,24 +618,28 @@
                         <h2 class="section-title">Profile Information</h2>
                         <form class="profile-form">
                             <div class="form-group">
-                                <label for="firstName">First Name</label>
-                                <input type="text" id="firstName" name="firstName" value="John">
+                                <label for="first-name">First Name</label>
+                                <input type="text" id="first-name" name="first-name" value="{{ user.first_name }}">
                             </div>
                             <div class="form-group">
-                                <label for="lastName">Last Name</label>
-                                <input type="text" id="lastName" name="lastName" value="Doe">
+                                <label for="last-name">Last Name</label>
+                                <input type="text" id="last-name" name="last-name" value="{{ user.last_name }}">
                             </div>
                             <div class="form-group">
                                 <label for="email">Email Address</label>
-                                <input type="email" id="email" name="email" value="john.doe@example.com">
+                                <input type="email" id="email" name="email" value="{{ user.email }}" disabled>
                             </div>
                             <div class="form-group">
                                 <label for="phone">Phone Number</label>
-                                <input type="tel" id="phone" name="phone" value="+1 (555) 123-4567">
+                                <input type="tel" id="phone" name="phone" value="{{ user.phone }}">
                             </div>
                             <div class="form-group">
                                 <label for="birthdate">Date of Birth</label>
-                                <input type="date" id="birthdate" name="birthdate" value="1990-01-15">
+                                <input type="date" id="birthdate" name="birthdate" value="{{ user.birthdate }}">
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="bio">Bio</label>
+                                <textarea id="bio" name="bio" rows="4">{{ user.bio }}</textarea>
                             </div>
                             <div class="form-group">
                                 <label for="gender">Gender</label>
@@ -813,7 +816,7 @@
                                         SMS notifications
                                     </label>
                                 </div>
-                                <button type="submit" class="btn">Save Preferences</button>
+                                <button type="submit" class="btn" id="save-changes-btn">Save Changes</button>
                             </form>
                         </div>
                     </div>
@@ -899,6 +902,49 @@
                 });
             });
         });
+
+        // Handle profile update
+        const profileForm = document.querySelector('.profile-form');
+        if (profileForm) {
+            profileForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const saveButton = document.getElementById('save-changes-btn');
+                saveButton.disabled = true;
+                saveButton.textContent = 'Saving...';
+
+                const formData = {
+                    first_name: document.getElementById('first-name').value,
+                    last_name: document.getElementById('last-name').value,
+                    phone: document.getElementById('phone').value,
+                    birthdate: document.getElementById('birthdate').value,
+                    bio: document.getElementById('bio').value,
+                };
+
+                fetch('/api/update_profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                    } else {
+                        alert('Error: ' + data.errors.join('\n'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An unexpected error occurred.');
+                })
+                .finally(() => {
+                    saveButton.disabled = false;
+                    saveButton.textContent = 'Save Changes';
+                });
+            });
+        }
     </script>
 </body>
 </html>
