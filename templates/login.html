@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LuxeShop | Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* Global Styles */
         :root {
@@ -224,6 +225,26 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             animation: slideIn 0.8s ease-out;
         }
+
+        .flash-message {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .flash-message.error {
+            background-color: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .flash-message.success {
+            background-color: #dcfce7;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
         
         @keyframes slideIn {
             from {
@@ -411,211 +432,36 @@
             border-color: var(--secondary);
             color: var(--secondary);
         }
-        
-        /* Featured Products */
-        .section-title {
-            text-align: center;
-            margin: 60px 0 40px;
-            font-size: 32px;
-            color: var(--primary);
-        }
-        
-        .products {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-        
-        .product-card {
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s;
-        }
-        
-        .product-card:hover {
-            transform: translateY(-10px);
-        }
-        
-        .product-img {
-            height: 250px;
-            overflow: hidden;
-        }
-        
-        .product-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s;
-        }
-        
-        .product-card:hover .product-img img {
-            transform: scale(1.1);
-        }
-        
-        .product-info {
-            padding: 20px;
-        }
-        
-        .product-title {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-        
-        .product-price {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--secondary);
-            margin-bottom: 15px;
-        }
-        
-        .product-price del {
-            color: #95a5a6;
-            font-size: 16px;
-            margin-left: 10px;
-        }
-        
-        .add-to-cart {
-            width: 100%;
-            padding: 10px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .add-to-cart:hover {
-            background-color: #1a252f;
-        }
-        
-        /* Newsletter */
-        .newsletter {
-            background-color: var(--primary);
-            color: white;
-            padding: 60px 0;
-            text-align: center;
-        }
-        
-        .newsletter h2 {
-            margin-bottom: 20px;
-        }
-        
-        .newsletter p {
-            max-width: 600px;
-            margin: 0 auto 30px;
-        }
-        
-        .newsletter-form {
+
+        /* Role Selector Styles */
+        .role-selector {
             display: flex;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        
-        .newsletter-form input {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            border-radius: 30px 0 0 30px;
-            font-size: 16px;
-        }
-        
-        .newsletter-form button {
-            padding: 15px 30px;
-            background-color: var(--secondary);
-            color: white;
-            border: none;
-            border-radius: 0 30px 30px 0;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .newsletter-form button:hover {
-            background-color: #c0392b;
-        }
-        
-        /* Footer */
-        footer {
-            background-color: var(--dark);
-            color: white;
-            padding: 60px 0 20px;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-        
-        .footer-column h3 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            position: relative;
-            padding-bottom: 10px;
-        }
-        
-        .footer-column h3::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 50px;
-            height: 2px;
-            background-color: var(--secondary);
-        }
-        
-        .footer-column ul {
-            list-style: none;
-        }
-        
-        .footer-column ul li {
-            margin-bottom: 10px;
-        }
-        
-        .footer-column ul li a {
-            color: #bdc3c7;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-column ul li a:hover {
-            color: var(--secondary);
-        }
-        
-        .social-links {
-            display: flex;
+            justify-content: center;
             gap: 15px;
+            margin-bottom: 25px;
         }
-        
-        .social-links a {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            color: white;
-            text-align: center;
-            line-height: 40px;
-            transition: all 0.3s;
+
+        .role-selector input[type="radio"] {
+            display: none; /* Hide the actual radio button */
         }
-        
-        .social-links a:hover {
+
+        .role-selector label {
+            padding: 10px 20px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: var(--primary);
+            background-color: #f8f9fa;
+        }
+
+        .role-selector input[type="radio"]:checked + label {
             background-color: var(--secondary);
-            transform: translateY(-5px);
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: #bdc3c7;
-            font-size: 14px;
+            color: white;
+            border-color: var(--secondary);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+            transform: translateY(-2px);
         }
         
         /* Responsive Design */
@@ -640,38 +486,23 @@
                 flex-direction: column;
             }
             
-            .newsletter-form {
-                flex-direction: column;
-            }
-            
-            .newsletter-form input {
-                border-radius: 30px;
-                margin-bottom: 10px;
-            }
-            
-            .newsletter-form button {
-                border-radius: 30px;
-            }
-            
             .shape {
                 display: none;
             }
         }
     </style>
-    <!-- Using Font Awesome for icons (loaded via CDN) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <!-- Header -->
     <header>
         <div class="container">
             <nav class="navbar">
-                <a href="/" class="logo">Luxe<span>Shop</span></a>
+                <a href="{{ url_for('index') }}" class="logo">Luxe<span>Shop</span></a>
                 <div class="nav-links">
                     
                 </div>
                 <div class="icons">
-                    <a href="/home" class="back-btn" title="Go Back">
+                    <a href="{{ url_for('index') }}" class="back-btn" title="Go Back">
                         <i class="fas fa-arrow-left"></i>
                         <span>Back</span>
                     </a>
@@ -696,7 +527,24 @@
                 <p>Sign in to your LuxeShop account</p>
             </div>
             
-            <form>
+            <div id="flash-messages"></div>
+
+            <form id="login-form">
+                <div class="form-group role-selector">
+                    <div>
+                        <input type="radio" id="role-user" name="role" value="user" checked>
+                        <label for="role-user"><i class="fas fa-user"></i> User</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="role-seller" name="role" value="seller">
+                        <label for="role-seller"><i class="fas fa-store"></i> Seller</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="role-admin" name="role" value="admin">
+                        <label for="role-admin"><i class="fas fa-user-shield"></i> Admin</label>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <input type="email" id="email" name="email" placeholder="Enter your email" required>
@@ -716,7 +564,7 @@
                 </div>
                 
                 <div class="login-footer">
-                    <a href="#">Forgot your password?</a>
+                    <a href="{{ url_for('forgot_password_page') }}">Forgot your password?</a>
                 </div>
             </form>
             
@@ -725,7 +573,7 @@
             </div>
             
             <div class="social-login">
-                <button class="social-btn">
+                <button class="social-btn" id="google-login-btn">
                     <i class="fab fa-google"></i>
                     Google
                 </button>
@@ -736,7 +584,7 @@
             </div>
             
             <div class="login-footer" style="margin-top: 20px;">
-                Don't have an account? <a href="/signup">Sign up here</a>
+                Don't have an account? <a href="{{ url_for('signup_page') }}">Sign up here</a>
             </div>
         </div>
     </section>
@@ -744,13 +592,15 @@
     
     <script>
         // Form submission handling
-        document.querySelector('form').addEventListener('submit', function(e) {
+        document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const loginButton = document.getElementById('login-btn');
             const loadingSpinner = document.getElementById('loading-spinner');
+            const flashMessages = document.getElementById('flash-messages');
+            flashMessages.innerHTML = '';
             
             if (!email || !password) {
                 alert('Please fill in all fields.');
@@ -761,6 +611,8 @@
             loginButton.disabled = true;
             loadingSpinner.style.display = 'block';
             
+            const role = document.querySelector('input[name="role"]:checked').value;
+
             // Send data to Flask backend
             fetch('/api/login', {
                 method: 'POST',
@@ -769,7 +621,8 @@
                 },
                 body: JSON.stringify({
                     email: email,
-                    password: password
+                    password: password,
+                    role: role
                 })
             })
             .then(response => response.json())
@@ -777,12 +630,21 @@
                 if (data.success) {
                     window.location.href = data.redirect_url || '/';
                 } else {
-                    alert('Error: ' + (data.errors ? data.errors.join('\n') : 'Unknown error'));
+                    const errorMessage = Array.isArray(data.errors) ? data.errors.join('<br>') : data.errors;
+                    flashMessages.innerHTML = `
+                        <div class="flash-message error">
+                            ${errorMessage}
+                        </div>
+                    `;
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred. Please try again.');
+                flashMessages.innerHTML = `
+                    <div class="flash-message error">
+                        An unexpected error occurred. Please try again.
+                    </div>
+                `;
             })
             .finally(() => {
                 // Hide spinner and enable button
@@ -804,12 +666,31 @@
             this.classList.toggle('fa-eye-slash');
         });
         
-        // Social login buttons
-        document.querySelectorAll('.social-btn').forEach(button => {
+        // Google login button
+        document.getElementById('google-login-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            fetch('/api/auth/google/signin')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = data.url;
+                    } else {
+                        alert('Error: Could not start Google sign-in.');
+                        console.error('Google Sign-In Error:', data.errors);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while trying to sign in with Google.');
+                });
+        });
+
+        // Placeholder for other social logins
+        document.querySelectorAll('.social-btn:not(#google-login-btn)').forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();
                 const platform = this.textContent.trim();
-                alert(`${platform} login functionality would be implemented here.`);
+                alert(`${platform} login functionality is not yet implemented.`);
             });
         });
     </script>

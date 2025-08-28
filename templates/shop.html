@@ -599,29 +599,29 @@
     <header>
         <div class="container">
             <nav class="navbar">
-                <a href="index.html" class="logo">Luxe<span>Shop</span></a>
+                <a href="{{ url_for('index') }}" class="logo">Luxe<span>Shop</span></a>
                 <div class="nav-links">
-                    <a href="/index">Home</a>
-                    <a href="/shop" class="active">Shop</a>
-                    <a href="/about">About</a>
-                    <a href="/contact">Contact</a>
+                    <a href="{{ url_for('index') }}">Home</a>
+                    <a href="{{ url_for('shop') }}" class="active">Shop</a>
+                    <a href="{{ url_for('about') }}">About</a>
+                    <a href="{{ url_for('contact') }}">Contact</a>
                     
                 </div>
                 <div class="icons">
-                    <a href="/user" class="icon-tooltip">
+                    <a href="{{ url_for('user') }}" class="icon-tooltip">
                         <i class="fas fa-user"></i>
                         <span class="tooltip-text">Profile</span>
                     </a>
                     
                     <div class="icon-tooltip">
-                        <a href="/wishlist">
+                        <a href="{{ url_for('wishlist') }}">
                         <i class="fas fa-heart"></i>
                         <span class="tooltip-text">Wishlist</span>
                         </a>
                     </div>
                     
                     <div class="icon-tooltip">
-                        <a href="/cart">
+                        <a href="{{ url_for('cart_page') }}">
                         <i class="fas fa-shopping-cart">
                             
                         </i>
@@ -654,376 +654,27 @@
             </div>
         </div>
         
-        <!-- Shirts Section -->
-        <div class="category-section" id="shirts">
-            <div class="category-header">
-                <h2 class="category-title">Premium Shirts</h2>
-                <a href="#" class="view-all">View All Shirts →</a>
-            </div>
-            <div class="products">
-                <div class="product-card" data-product-id="101">
+        <!-- Products Section -->
+        <div class="products">
+            {% if products %}
+                {% for product in products %}
+                <div class="product-card" data-product-id="{{ product.id }}" data-category="{{ product.category.lower() if product.category else '' }}">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Classic White Shirt">
+                        <img src="{{ url_for('static', filename=product.image_url) }}" alt="{{ product.name }}">
                         <i class="fas fa-heart wishlist-icon"></i>
-                        <span class="product-badge">New</span>
                     </div>
                     <div class="product-info">
-                        <h3 class="product-title">Classic White Shirt</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★★</div>
-                            <span class="rating-text">(4.8)</span>
-                        </div>
-                        <p class="product-price">$45.00 <del>$60.00</del></p>
-                        <button class="add-to-cart">Add to Cart</button>
+                        <h3 class="product-title">{{ product.name }}</h3>
+                        <p class="product-price">${{ "%.2f"|format(product.price) }}</p>
+                        <button class="add-to-cart" data-product-id="{{ product.id }}">Add to Cart</button>
                     </div>
                 </div>
-                
-                <div class="product-card" data-product-id="102">
-                    <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Denim Shirt">
-                        <i class="fas fa-heart wishlist-icon"></i>
-                        <span class="product-badge">Sale</span>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Denim Shirt</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★☆</div>
-                            <span class="rating-text">(4.5)</span>
-                        </div>
-                        <p class="product-price">$55.00 <del>$75.00</del></p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <p class="text-center">No products found. Please check back later.</p>
                 </div>
-                
-                <div class="product-card" data-product-id="103">
-                    <div class="product-img">
-                        <i class="fas fa-heart wishlist-icon"></i>
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Polo Shirt">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Polo Shirt</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★★</div>
-                            <span class="rating-text">(4.9)</span>
-                        </div>
-                        <p class="product-price">$35.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <div class="product-card" data-product-id="104">
-                    <div class="product-img">
-                        <i class="fas fa-heart wishlist-icon"></i>
-                        <img src="https://images.unsplash.com/photo-1581655353564-df123a1eb820?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Oxford Shirt">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Oxford Shirt</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★☆</div>
-                            <span class="rating-text">(4.6)</span>
-                        </div>
-                        <p class="product-price">$50.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Pants Section -->
-        <div class="category-section" id="pants">
-            <div class="category-header">
-                <h2 class="category-title">Stylish Pants</h2>
-                <a href="#" class="view-all">View All Pants →</a>
-            </div>
-            <div class="products">
-                <div class="product-card" data-product-id="201">
-                    <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Slim Fit Jeans">
-                        <i class="fas fa-heart wishlist-icon"></i>
-                        <span class="product-badge">Popular</span>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Slim Fit Jeans</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★★</div>
-                            <span class="rating-text">(4.7)</span>
-                        </div>
-                        <p class="product-price">$65.00 <del>$85.00</del></p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <div class="product-card" data-product-id="202">
-                    <div class="product-img">
-                        <i class="fas fa-heart wishlist-icon"></i>
-                        <img src="https://images.unsplash.com/photo-1473966968600-fa801b869a1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Chino Pants">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Chino Pants</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★☆</div>
-                            <span class="rating-text">(4.4)</span>
-                        </div>
-                        <p class="product-price">$55.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <div class="product-card" data-product-id="203">
-                    <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Cargo Pants">
-                        <i class="fas fa-heart wishlist-icon"></i>
-                        <span class="product-badge">New</span>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Cargo Pants</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★★</div>
-                            <span class="rating-text">(4.8)</span>
-                        </div>
-                        <p class="product-price">$70.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <div class="product-card" data-product-id="204">
-                    <div class="product-img">
-                        <i class="fas fa-heart wishlist-icon"></i>
-                        <img src="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Dress Pants">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Dress Pants</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★☆</div>
-                            <span class="rating-text">(4.5)</span>
-                        </div>
-                        <p class="product-price">$80.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Shoes Section -->
-        <div class="category-section" id="shoes">
-            <div class="category-header">
-                <h2 class="category-title">Trendy Shoes</h2>
-                <a href="#" class="view-all">View All Shoes →</a>
-            </div>
-            <div class="products">
-                <div class="product-card" data-product-id="301">
-                    <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="White Sneakers">
-                        <i class="fas fa-heart wishlist-icon"></i>
-                        <span class="product-badge">Best Seller</span>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">White Sneakers</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★★</div>
-                            <span class="rating-text">(4.9)</span>
-                        </div>
-                        <p class="product-price">$95.00 <del>$120.00</del></p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <div class="product-card" data-product-id="302">
-                    <div class="product-img">
-                        <i class="fas fa-heart wishlist-icon"></i>
-                        <img src="https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Leather Boots">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Leather Boots</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★☆</div>
-                            <span class="rating-text">(4.6)</span>
-                        </div>
-                        <p class="product-price">$150.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <div class="product-card" data-product-id="303">
-                    <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Running Shoes">
-                        <i class="fas fa-heart wishlist-icon"></i>
-                        <span class="product-badge">New</span>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Running Shoes</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★★</div>
-                            <span class="rating-text">(4.8)</span>
-                        </div>
-                        <p class="product-price">$110.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <div class="product-card" data-product-id="304">
-                    <div class="product-img">
-                        <i class="fas fa-heart wishlist-icon"></i>
-                        <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Casual Loafers">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Casual Loafers</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★☆</div>
-                            <span class="rating-text">(4.4)</span>
-                        </div>
-                        <p class="product-price">$85.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Accessories Section -->
-        <div class="category-section" id="accessories">
-            <div class="category-header">
-                <h2 class="category-title">Fashion Accessories</h2>
-                <a href="#" class="view-all">View All Accessories →</a>
-            </div>
-            <div class="products">
-                <div class="product-card" data-product-id="401">
-                    <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Leather Watch">
-                        <i class="fas fa-heart wishlist-icon"></i>
-                        <span class="product-badge">Premium</span>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Leather Watch</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★★</div>
-                            <span class="rating-text">(4.9)</span>
-                        </div>
-                        <p class="product-price">$180.00 <del>$220.00</del></p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <div class="product-card" data-product-id="402">
-                    <div class="product-img">
-                        <i class="fas fa-heart wishlist-icon"></i>
-                        <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Leather Bag">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Leather Bag</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★☆</div>
-                            <span class="rating-text">(4.6)</span>
-                        </div>
-                        <p class="product-price">$120.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <div class="product-card" data-product-id="403">
-                    <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Sunglasses">
-                        <i class="fas fa-heart wishlist-icon"></i>
-                        <span class="product-badge">Trending</span>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Sunglasses</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★★</div>
-                            <span class="rating-text">(4.7)</span>
-                        </div>
-                        <p class="product-price">$75.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <div class="product-card" data-product-id="404">
-                    <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Leather Belt">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Leather Belt</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★☆</div>
-                            <span class="rating-text">(4.5)</span>
-                        </div>
-                        <p class="product-price">$45.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Dresses Section -->
-        <div class="category-section" id="dresses">
-            <div class="category-header">
-                <h2 class="category-title">Elegant Dresses</h2>
-                <a href="#" class="view-all">View All Dresses →</a>
-            </div>
-            <div class="products">
-                <div class="product-card" data-product-id="501">
-                    <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Summer Dress">
-                        <i class="fas fa-heart wishlist-icon"></i>
-                        <span class="product-badge">New</span>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Summer Dress</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★★</div>
-                            <span class="rating-text">(4.8)</span>
-                        </div>
-                        <p class="product-price">$85.00 <del>$110.00</del></p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <div class="product-card" data-product-id="502">
-                    <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Evening Gown">
-                        <i class="fas fa-heart wishlist-icon"></i>
-                        <span class="product-badge">Premium</span>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Evening Gown</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★★</div>
-                            <span class="rating-text">(4.9)</span>
-                        </div>
-                        <p class="product-price">$200.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <div class="product-card" data-product-id="503">
-                    <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Casual Dress">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Casual Dress</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★☆</div>
-                            <span class="rating-text">(4.6)</span>
-                        </div>
-                        <p class="product-price">$65.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-                
-                <div class="product-card" data-product-id="504">
-                    <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Cocktail Dress">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Cocktail Dress</h3>
-                        <div class="product-rating">
-                            <div class="stars">★★★★☆</div>
-                            <span class="rating-text">(4.5)</span>
-                        </div>
-                        <p class="product-price">$150.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-            </div>
+            {% endif %}
         </div>
     </div>
     
@@ -1054,10 +705,10 @@
                 <div class="footer-column">
                     <h3>Quick Links</h3>
                     <ul>
-                        <li><a href="/index">Home</a></li>
-                        <li><a href="/shop">Shop</a></li>
-                        <li><a href="/about">About Us</a></li>
-                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="{{ url_for('index') }}">Home</a></li>
+                        <li><a href="{{ url_for('shop') }}">Shop</a></li>
+                        <li><a href="{{ url_for('about') }}">About Us</a></li>
+                        <li><a href="{{ url_for('contact') }}">Contact</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
@@ -1267,7 +918,7 @@
                 });
             });
 
-            // Initial fetch of the wishlist
+            // Initial fetch
             fetchWishlist();
         });
     </script>

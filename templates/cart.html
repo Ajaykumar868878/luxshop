@@ -653,7 +653,7 @@
             <nav class="navbar">
                 <a href="/" class="logo">Luxe<span>Shop</span></a>
                 <div class="nav-links">
-                    <a href="/home">Home</a>
+                    <a href="/index">Home</a>
                     <a href="/shop">Shop</a>
                     <a href="/about">About</a>
                     <a href="/contact">Contact</a>
@@ -696,71 +696,34 @@
     <!-- Cart Content -->
     <section class="cart-content">
         <div class="container">
-            <!-- Cart Items Section -->
+            {% if cart_items %}
             <div class="cart-wrapper" id="cartWrapper">
                 <div class="cart-items">
                     <div class="cart-header">
-                        <h2 class="cart-title">Your Items</h2>
+                        <h2 class="cart-title">Your Items ({{ cart_items|length }})</h2>
                         <button class="clear-cart" onclick="clearCart()">Clear Cart</button>
                     </div>
                     <div id="cartItemsContainer">
-                        <!-- Sample Cart Items -->
-                        <div class="cart-item">
+                        {% for item in cart_items %}
+                        <div class="cart-item" data-product-id="{{ item.id }}">
                             <div class="item-image">
-                                <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Premium Leather Jacket">
+                                <img src="{{ url_for('static', filename=item.image_url) }}" alt="{{ item.name }}">
                             </div>
                             <div class="item-details">
-                                <h3>Premium Leather Jacket</h3>
-                                <p>Genuine leather, premium quality</p>
+                                <h3>{{ item.name }}</h3>
+                                <p>Price: ${{ "%.2f"|format(item.price) }}</p>
                             </div>
                             <div class="quantity-controls">
-                                <button class="qty-btn" onclick="updateQuantity(1, -1)">-</button>
-                                <input type="number" class="qty-input" value="1" min="1">
-                                <button class="qty-btn" onclick="updateQuantity(1, 1)">+</button>
+                                <button class="qty-btn" onclick="updateQuantity('{{ item.id }}', {{ item.quantity - 1 }})">-</button>
+                                <input type="number" class="qty-input" value="{{ item.quantity }}" min="1" onchange="updateQuantity('{{ item.id }}', this.value)">
+                                <button class="qty-btn" onclick="updateQuantity('{{ item.id }}', {{ item.quantity + 1 }})">+</button>
                             </div>
-                            <div class="item-price">$199.99</div>
-                            <button class="remove-item" onclick="removeItem(1)">
+                            <div class="item-price">${{ "%.2f"|format(item.total_price) }}</div>
+                            <button class="remove-item" onclick="removeItem('{{ item.id }}')">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
-                        
-                        <div class="cart-item">
-                            <div class="item-image">
-                                <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Classic White Sneakers">
-                            </div>
-                            <div class="item-details">
-                                <h3>Classic White Sneakers</h3>
-                                <p>Comfortable daily wear</p>
-                            </div>
-                            <div class="quantity-controls">
-                                <button class="qty-btn" onclick="updateQuantity(2, -1)">-</button>
-                                <input type="number" class="qty-input" value="2" min="1">
-                                <button class="qty-btn" onclick="updateQuantity(2, 1)">+</button>
-                            </div>
-                            <div class="item-price">$131.00</div>
-                            <button class="remove-item" onclick="removeItem(2)">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                        
-                        <div class="cart-item">
-                            <div class="item-image">
-                                <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Minimalist Watch">
-                            </div>
-                            <div class="item-details">
-                                <h3>Minimalist Watch</h3>
-                                <p>Elegant timepiece</p>
-                            </div>
-                            <div class="quantity-controls">
-                                <button class="qty-btn" onclick="updateQuantity(3, -1)">-</button>
-                                <input type="number" class="qty-input" value="1" min="1">
-                                <button class="qty-btn" onclick="updateQuantity(3, 1)">+</button>
-                            </div>
-                            <div class="item-price">$120.00</div>
-                            <button class="remove-item" onclick="removeItem(3)">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
 
@@ -769,24 +732,28 @@
                     <h3 class="summary-title">Order Summary</h3>
                     <div class="summary-row">
                         <span>Subtotal:</span>
-                        <span id="subtotal">$450.99</span>
+                        <span id="subtotal">${{ "%.2f"|format(subtotal) }}</span>
                     </div>
                     <div class="summary-row">
                         <span>Shipping:</span>
-                        <span id="shipping">$9.99</span>
+                        <span id="shipping">${{ "%.2f"|format(shipping) }}</span>
                     </div>
                     <div class="summary-row">
-                        <span>Tax:</span>
-                        <span id="tax">$36.08</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Discount:</span>
-                        <span id="discount">-$0.00</span>
+                        <span>Tax (8%):</span>
+                        <span id="tax">${{ "%.2f"|format(tax) }}</span>
                     </div>
                     <div class="summary-row total">
                         <span>Total:</span>
-                        <span id="total">$497.06</span>
+                        <span id="total">${{ "%.2f"|format(total) }}</span>
                     </div>
+            {% else %}
+            <div class="empty-cart" id="emptyCart">
+                <i class="fas fa-shopping-cart"></i>
+                <h2>Your cart is empty</h2>
+                <p>Looks like you haven't added anything to your cart yet</p>
+                <a href="/shop" class="shop-now-btn">Start Shopping</a>
+            </div>
+            {% endif %}
                     
                     <div class="promo-code">
                         <input type="text" class="promo-input" placeholder="Enter promo code" id="promoCode">
@@ -861,99 +828,58 @@
     </footer>
 
     <script>
-        // Cart functionality
-        let cartItems = [
-            {id: 1, name: "Premium Leather Jacket", price: 199.99, quantity: 1},
-            {id: 2, name: "Classic White Sneakers", price: 65.50, quantity: 2},
-            {id: 3, name: "Minimalist Watch", price: 120.00, quantity: 1}
-        ];
+        async function updateQuantity(productId, quantity) {
+            if (quantity < 1) {
+                return removeItem(productId);
+            }
 
-        const promoCodes = {
-            'SAVE10': 0.10,
-            'WELCOME20': 0.20,
-            'LUXURY15': 0.15
-        };
+            const response = await fetch('/api/cart/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ product_id: productId, quantity: quantity })
+            });
 
-        let appliedDiscount = 0;
-
-        function updateQuantity(id, change) {
-            const item = cartItems.find(item => item.id === id);
-            if (item) {
-                item.quantity += change;
-                if (item.quantity <= 0) {
-                    removeItem(id);
-                } else {
-                    updateDisplay();
-                }
+            const result = await response.json();
+            if (result.success) {
+                window.location.reload();
+            } else {
+                alert('Failed to update cart.');
             }
         }
 
-        function removeItem(id) {
-            cartItems = cartItems.filter(item => item.id !== id);
-            updateDisplay();
-            if (cartItems.length === 0) {
-                showEmptyCart();
+        async function removeItem(productId) {
+            if (!confirm('Are you sure you want to remove this item?')) return;
+
+            const response = await fetch('/api/cart/remove', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ product_id: productId })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                window.location.reload();
+            } else {
+                alert('Failed to remove item from cart.');
             }
         }
 
-        function clearCart() {
-            if (confirm('Are you sure you want to clear your cart?')) {
-                cartItems = [];
-                showEmptyCart();
-            }
-        }
+        async function clearCart() {
+            if (!confirm('Are you sure you want to clear your cart?')) return;
 
-        function showEmptyCart() {
-            document.getElementById('cartWrapper').style.display = 'none';
-            document.getElementById('emptyCart').style.display = 'block';
-            document.getElementById('cartBadge').textContent = '0';
-        }
-
-        function updateDisplay() {
-            const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const shipping = cartItems.length > 0 ? 9.99 : 0;
-            const tax = subtotal * 0.08;
-            const discount = subtotal * appliedDiscount;
-            const total = subtotal + shipping + tax - discount;
-
-            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
-            document.getElementById('shipping').textContent = cartItems.length > 0 ? `$${shipping.toFixed(2)}` : 'Free';
-            document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
-            document.getElementById('discount').textContent = `-$${discount.toFixed(2)}`;
-            document.getElementById('total').textContent = `$${total.toFixed(2)}`;
-            
-            const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-            document.getElementById('cartBadge').textContent = totalItems;
-        }
-
-        function applyPromoCode() {
-            const promoInput = document.getElementById('promoCode');
-            const code = promoInput.value.toUpperCase().trim();
-            
-            if (promoCodes[code]) {
-                appliedDiscount = promoCodes[code];
-                updateDisplay();
-                promoInput.style.borderColor = '#27ae60';
-                promoInput.value = `${code} Applied!`;
-                promoInput.disabled = true;
-                alert('Promo code applied successfully!');
-            } else if (code) {
-                promoInput.style.borderColor = '#e74c3c';
-                alert('Invalid promo code');
+            const response = await fetch('/api/cart/clear', { method: 'POST' });
+            const result = await response.json();
+            if (result.success) {
+                window.location.reload();
+            } else {
+                alert('Failed to clear cart.');
             }
         }
 
         function proceedToCheckout() {
-            if (cartItems.length === 0) {
-                alert('Your cart is empty!');
-                return;
-            }
             alert('Proceeding to checkout...');
-            // Here you would typically redirect to checkout page
+            // Redirect to a checkout page would happen here.
         }
-
-        // Initialize display
-        updateDisplay();
     </script>
 </body>
 </html>

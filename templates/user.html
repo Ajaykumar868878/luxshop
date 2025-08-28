@@ -607,9 +607,10 @@
                         <li><a href="#" class="nav-link" data-section="order-history"><i class="fas fa-box"></i>Order History</a></li>
                         <li><a href="#" class="nav-link" data-section="addresses"><i class="fas fa-map-marker-alt"></i>Addresses</a></li>
                         <li><a href="#" class="nav-link" data-section="settings"><i class="fas fa-cog"></i>Account Settings</a></li>
-                        <li><a href="/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+                        <li><button id="logout-btn" class="auth-btn signup-btn">Logout</button></li>
                     </ul>
                 </div>
+                
                 
                 <!-- Profile Content -->
                 <div class="profile-content">
@@ -778,7 +779,7 @@
                         
                         <div style="margin-bottom: 40px;">
                             <h3 style="margin-bottom: 20px; color: #2c3e50;">Password & Security</h3>
-                            <form class="profile-form">
+                            <form class="profile-form" id="password-update-form">
                                 <div class="form-group">
                                     <label for="currentPassword">Current Password</label>
                                     <input type="password" id="currentPassword" name="currentPassword">
@@ -943,6 +944,73 @@
                     saveButton.disabled = false;
                     saveButton.textContent = 'Save Changes';
                 });
+            });
+        }
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/';
+        });
+
+        const passwordForm = document.getElementById('password-update-form');
+        if (passwordForm) {
+            passwordForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                // Remove previous feedback message if it exists
+                const existingFeedback = passwordForm.querySelector('.feedback-message');
+                if (existingFeedback) {
+                    existingFeedback.remove();
+                }
+
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.className = 'feedback-message';
+                feedbackDiv.style.marginTop = '15px';
+                feedbackDiv.style.fontWeight = '500';
+                passwordForm.appendChild(feedbackDiv);
+
+                if (newPassword !== confirmPassword) {
+                    feedbackDiv.textContent = 'New passwords do not match.';
+                    feedbackDiv.style.color = 'var(--secondary)';
+                    return;
+                }
+
+                if (newPassword.length < 6) {
+                    feedbackDiv.textContent = 'Password must be at least 6 characters long.';
+                    feedbackDiv.style.color = 'var(--secondary)';
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/update_password', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            current_password: currentPassword,
+                            new_password: newPassword,
+                        }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        feedbackDiv.textContent = data.message;
+                        feedbackDiv.style.color = 'green';
+                        passwordForm.reset();
+                    } else {
+                        feedbackDiv.textContent = data.errors.join(', ');
+                        feedbackDiv.style.color = 'var(--secondary)';
+                    }
+                } catch (error) {
+                    feedbackDiv.textContent = 'An unexpected error occurred. Please try again.';
+                    feedbackDiv.style.color = 'var(--secondary)';
+                    console.error('Error updating password:', error);
+                }
             });
         }
     </script>

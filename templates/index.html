@@ -197,6 +197,7 @@
             max-width: 800px;
             margin: 0 auto;
         }
+
         
         .hero h1 {
             font-size: 48px;
@@ -273,7 +274,43 @@
         }
         
         .product-info {
+            position: relative;
             padding: 20px;
+        }
+
+        .wishlist-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 22px;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .wishlist-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .wishlist-icon.active {
+            color: var(--secondary);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background-color: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+
+        .icon-tooltip {
+            position: relative;
         }
         
         .product-title {
@@ -438,7 +475,7 @@
         /* Responsive Design */
         @media (max-width: 768px) {
             .navbar {
-                flex-direction: column;
+                flex-direction: column; 
                 gap: 20px;
             }
             
@@ -464,8 +501,7 @@
             }
         }
     </style>
-    <!-- Using Font Awesome for icons (loaded via CDN) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <!-- Header -->
@@ -481,12 +517,13 @@
                 </div>
                 <div class="icons">
                     <div class="auth-buttons">
-                        <a href="/login" class="auth-btn login-btn" id="login-btn">Login</a>
-                        <a href="/signup" class="auth-btn signup-btn" id="signup-btn">Sign Up</a>
-                        <div id="user-info" style="display: none;">
-                            <a href="/user" id="user-name" class="auth-btn"></a>
-                            <button id="logout-btn" class="auth-btn signup-btn">Logout</button>
-                        </div>
+                        {% if user %}
+                            <span class="auth-btn">Hi, {{ user.first_name }}</span>
+                            <a href="{{ url_for('logout') }}" class="auth-btn signup-btn">Logout</a>
+                        {% else %}
+                            <a href="{{ url_for('login_page') }}" class="auth-btn login-btn">Login</a>
+                            <a href="{{ url_for('signup_page') }}" class="auth-btn signup-btn">Sign Up</a>
+                        {% endif %}
                     </div>
                     
                     <a href="/user" class="icon-tooltip">
@@ -503,9 +540,8 @@
                     
                     <div class="icon-tooltip">
                         <a href="/cart">
-                        <i class="fas fa-shopping-cart">
-                            
-                        </i>
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cart-count" class="cart-count" style="display: none;">0</span>
                         <span class="tooltip-text">Cart</span>
                         </a>
                     </div>
@@ -522,17 +558,19 @@
             <a href="/shop" class="btn">Shop Now</a>
         </div>
     </section>
+
     
     <!-- Featured Products -->
     <div class="container">
         <h2 class="section-title">Featured Products</h2>
         <div class="products">
             <!-- Product 1 -->
-            <div class="product-card">
+            <div class="product-card" data-product-id="1">
                 <div class="product-img">
                     <img src="https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?ixlib=rb-1.2.1&auto=format&fit=crop&w=925&q=80" alt="Product 1">
                 </div>
                 <div class="product-info">
+                    <i class="fas fa-heart wishlist-icon"></i>
                     <h3 class="product-title">Premium Denim Jacket</h3>
                     <p class="product-price">$89.99 <del>$120.00</del></p>
                     <button class="add-to-cart">Add to Cart</button>
@@ -540,11 +578,12 @@
             </div>
             
             <!-- Product 2 -->
-            <div class="product-card">
+            <div class="product-card" data-product-id="2">
                 <div class="product-img">
                     <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?ixlib=rb-1.2.1&auto=format&fit=crop&w=926&q=80" alt="Product 2">
                 </div>
                 <div class="product-info">
+                    <i class="fas fa-heart wishlist-icon"></i>
                     <h3 class="product-title">Classic White Sneakers</h3>
                     <p class="product-price">$65.50 <del>$80.00</del></p>
                     <button class="add-to-cart">Add to Cart</button>
@@ -552,11 +591,12 @@
             </div>
             
             <!-- Product 3 -->
-            <div class="product-card">
+            <div class="product-card" data-product-id="3">
                 <div class="product-img">
                     <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-1.2.1&auto=format&fit=crop&w=936&q=80" alt="Product 3">
                 </div>
                 <div class="product-info">
+                    <i class="fas fa-heart wishlist-icon"></i>
                     <h3 class="product-title">Leather Crossbody Bag</h3>
                     <p class="product-price">$75.00 <del>$95.00</del></p>
                     <button class="add-to-cart">Add to Cart</button>
@@ -564,11 +604,12 @@
             </div>
             
             <!-- Product 4 -->
-            <div class="product-card">
+            <div class="product-card" data-product-id="4">
                 <div class="product-img">
                     <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80" alt="Product 4">
                 </div>
                 <div class="product-info">
+                    <i class="fas fa-heart wishlist-icon"></i>
                     <h3 class="product-title">Minimalist Watch</h3>
                     <p class="product-price">$120.00 <del>$150.00</del></p>
                     <button class="add-to-cart">Add to Cart</button>
@@ -636,22 +677,7 @@
         </div>
     </footer>
 <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        const response = await fetch('/api/user');
-        const data = await response.json();
-
-        if (data.logged_in) {
-            document.getElementById('login-btn').style.display = 'none';
-            document.getElementById('signup-btn').style.display = 'none';
-            document.getElementById('user-info').style.display = 'block';
-            document.getElementById('user-name').textContent = `Welcome, ${data.user.name}`;
-        }
-    });
-
-    document.getElementById('logout-btn').addEventListener('click', async () => {
-        await fetch('/api/logout', { method: 'POST' });
-        window.location.href = '/';
-    });
+    // You can add other page-specific JavaScript here if needed.
 </script>
 </body>
 </html>

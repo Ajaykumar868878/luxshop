@@ -689,186 +689,43 @@
             <!-- Wishlist Stats -->
             <div class="wishlist-stats">
                 <div class="stat-item">
-                    <span class="number">5</span>
+                    <span class="number" id="items-saved">{{ wishlist_items|length }}</span>
                     <span class="label">Items Saved</span>
                 </div>
                 <div class="stat-item">
-                    <span class="number">₹12,450</span>
+                    {% set total_value = wishlist_items|sum(attribute='price') %}
+                    <span class="number" id="total-value">₹{{ "%.2f"|format(total_value) }}</span>
                     <span class="label">Total Value</span>
-                </div>
-                <div class="stat-item">
-                    <span class="number">₹2,100</span>
-                    <span class="label">You Save</span>
-                </div>
-            </div>
-
-            <!-- Wishlist Actions -->
-            <div class="wishlist-actions">
-                <div class="wishlist-filters">
-                    <select class="filter-select">
-                        <option>All Items</option>
-                        <option>In Stock</option>
-                        <option>Out of Stock</option>
-                        <option>On Sale</option>
-                    </select>
-                    <select class="filter-select">
-                        <option>Sort by Date Added</option>
-                        <option>Sort by Price (Low to High)</option>
-                        <option>Sort by Price (High to Low)</option>
-                        <option>Sort by Name</option>
-                    </select>
-                </div>
-                <div>
-                    <button class="btn btn-secondary">
-                        <i class="fas fa-share"></i> Share Wishlist
-                    </button>
-                    <button class="btn btn-primary">
-                        <i class="fas fa-shopping-cart"></i> Add All to Cart
-                    </button>
                 </div>
             </div>
 
             <!-- Wishlist Items Grid -->
-            <div class="wishlist-grid">
-                <!-- Wishlist Item 1 -->
-                <div class="wishlist-item">
-                    <div class="date-added">Added 2 days ago</div>
-                    <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400" alt="Nike Air Max">
-                    <div class="wishlist-item-content">
-                        <div class="brand">Nike</div>
-                        <h3>Air Max 270 React</h3>
-                        <div class="stock-status in-stock">In Stock</div>
-                        <div class="price">
-                            ₹8,999
-                            <span class="original-price">₹12,999</span>
-                            <span class="discount">31% OFF</span>
-                        </div>
-                        <div class="wishlist-item-actions">
-                            <button class="btn btn-primary">Add to Cart</button>
-                            <button class="btn-remove">
-                                <i class="fas fa-trash"></i>
-                            </button>
+            <div class="wishlist-grid" id="wishlist-grid">
+                {% if wishlist_items %}
+                    {% for item in wishlist_items %}
+                    <div class="wishlist-item" data-product-id="{{ item.id }}">
+                        <img src="{{ item.image_url }}" alt="{{ item.name }}">
+                        <div class="wishlist-item-content">
+                            <h3>{{ item.name }}</h3>
+                            <div class="price">₹{{ "{:.2f}".format(item.price) }}</div>
+                            <div class="wishlist-item-actions">
+                                <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                                <button class="btn-remove remove-from-wishlist-btn">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
+                    {% endfor %}
+                {% else %}
+                <div class="empty-wishlist">
+                    <i class="fas fa-heart-broken"></i>
+                    <h3>Your Wishlist is Empty</h3>
+                    <p>Looks like you haven't added anything to your wishlist yet.</p>
+                    <a href="{{ url_for('shop') }}" class="btn btn-primary">Start Shopping</a>
                 </div>
-
-                <!-- Wishlist Item 2 -->
-                <div class="wishlist-item">
-                    <div class="date-added">Added 1 week ago</div>
-                    <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400" alt="Apple Watch">
-                    <div class="wishlist-item-content">
-                        <div class="brand">Apple</div>
-                        <h3>Watch Series 9 GPS</h3>
-                        <div class="stock-status low-stock">Only 2 left</div>
-                        <div class="price">
-                            ₹41,900
-                            <span class="original-price">₹45,900</span>
-                            <span class="discount">9% OFF</span>
-                        </div>
-                        <div class="wishlist-item-actions">
-                            <button class="btn btn-primary">Add to Cart</button>
-                            <button class="btn-remove">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Wishlist Item 3 -->
-                <div class="wishlist-item">
-                    <div class="date-added">Added 3 days ago</div>
-                    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400" alt="Headphones">
-                    <div class="wishlist-item-content">
-                        <div class="brand">Sony</div>
-                        <h3>WH-1000XM4 Wireless Headphones</h3>
-                        <div class="stock-status in-stock">In Stock</div>
-                        <div class="price">
-                            ₹24,990
-                            <span class="original-price">₹29,990</span>
-                            <span class="discount">17% OFF</span>
-                        </div>
-                        <div class="wishlist-item-actions">
-                            <button class="btn btn-primary">Add to Cart</button>
-                            <button class="btn-remove">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Wishlist Item 4 -->
-                <div class="wishlist-item">
-                    <div class="date-added">Added 5 days ago</div>
-                    <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400" alt="Backpack">
-                    <div class="wishlist-item-content">
-                        <div class="brand">Herschel</div>
-                        <h3>Little America Backpack</h3>
-                        <div class="stock-status out-of-stock">Out of Stock</div>
-                        <div class="price">
-                            ₹7,999
-                        </div>
-                        <div class="wishlist-item-actions">
-                            <button class="btn btn-secondary" disabled>Notify When Available</button>
-                            <button class="btn-remove">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Wishlist Item 5 -->
-                <div class="wishlist-item">
-                    <div class="date-added">Added 1 day ago</div>
-                    <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400" alt="Sunglasses">
-                    <div class="wishlist-item-content">
-                        <div class="brand">Ray-Ban</div>
-                        <h3>Aviator Classic Sunglasses</h3>
-                        <div class="stock-status in-stock">In Stock</div>
-                        <div class="price">
-                            ₹12,990
-                            <span class="original-price">₹15,990</span>
-                            <span class="discount">19% OFF</span>
-                        </div>
-                        <div class="wishlist-item-actions">
-                            <button class="btn btn-primary">Add to Cart</button>
-                            <button class="btn-remove">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                {% endif %}
             </div>
-
-            <!-- Related Products Section -->
-            <section class="related-section">
-                <h2>You Might Also Like</h2>
-                <div class="product-grid">
-                    <div class="product-card">
-                        <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400" alt="Suggested Product">
-                        <div class="product-info">
-                            <h3>Premium Leather Jacket</h3>
-                            <div class="price">₹15,999</div>
-                            <button class="btn btn-primary">Add to Wishlist</button>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400" alt="Suggested Product">
-                        <div class="product-info">
-                            <h3>Designer Handbag</h3>
-                            <div class="price">₹22,500</div>
-                            <button class="btn btn-primary">Add to Wishlist</button>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400" alt="Suggested Product">
-                        <div class="product-info">
-                            <h3>Smart Fitness Tracker</h3>
-                            <div class="price">₹8,999</div>
-                            <button class="btn btn-primary">Add to Wishlist</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
         </div>
     </main>
 
@@ -908,7 +765,7 @@
                 <ul>
                     <li><a href="{{ url_for('user') }}">My Account</a></li>
                     <li><a href="{{ url_for('wishlist') }}">Wishlist</a></li>
-                    <li><a href="{{ url_for('cart') }}">Shopping Cart</a></li>
+                                        <li><a href="{{ url_for('cart_page') }}">Shopping Cart</a></li>
                     <li><a href="#">Order History</a></li>
                 </ul>
             </div>
@@ -919,163 +776,98 @@
     </footer>
 
     <script>
-        // Mobile Navigation Toggle
         document.addEventListener('DOMContentLoaded', function() {
-            const mobileToggle = document.querySelector('.mobile-menu-toggle');
-            const navMenu = document.querySelector('.nav-menu');
+            updateCartBadge();
 
-            if (mobileToggle) {
-                mobileToggle.addEventListener('click', function() {
-                    this.classList.toggle('active');
-                    navMenu.classList.toggle('active');
-                });
-            }
+            document.getElementById('wishlist-grid').addEventListener('click', function(event) {
+                const removeButton = event.target.closest('.remove-from-wishlist-btn');
+                const addButton = event.target.closest('.add-to-cart-btn');
 
-            // Close mobile menu when clicking on a link
-            const navLinks = document.querySelectorAll('.nav-menu a');
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileToggle.classList.remove('active');
-                    navMenu.classList.remove('active');
-                });
-            });
+                if (removeButton) {
+                    const product_id = removeButton.closest('.wishlist-item').dataset.productId;
+                    removeFromWishlist(product_id);
+                }
 
-            // Close mobile menu when clicking outside
-            document.addEventListener('click', function(event) {
-                const isClickInsideNav = navMenu.contains(event.target);
-                const isClickOnToggle = mobileToggle.contains(event.target);
-                
-                if (!isClickInsideNav && !isClickOnToggle && navMenu.classList.contains('active')) {
-                    mobileToggle.classList.remove('active');
-                    navMenu.classList.remove('active');
+                if (addButton) {
+                    const product_id = addButton.closest('.wishlist-item').dataset.productId;
+                    addToCart(product_id);
                 }
             });
-
-        // Wishlist functionality
-            // Remove item from wishlist
-            const removeButtons = document.querySelectorAll('.btn-remove');
-            removeButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const item = this.closest('.wishlist-item');
-                    if (confirm('Are you sure you want to remove this item from your wishlist?')) {
-                        item.style.opacity = '0';
-                        item.style.transform = 'scale(0.8)';
-                        setTimeout(() => {
-                            item.remove();
-                            updateWishlistStats();
-                        }, 300);
-                    }
-                });
-            });
-
-            // Add to cart functionality
-            const addToCartButtons = document.querySelectorAll('.wishlist-item-actions .btn-primary');
-            addToCartButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const item = this.closest('.wishlist-item');
-                    const itemName = item.querySelector('h3').textContent;
-                    
-                    // Add animation
-                    this.innerHTML = '<i class="fas fa-check"></i> Added!';
-                    this.style.background = '#27ae60';
-                    
-                    setTimeout(() => {
-                        this.innerHTML = 'Add to Cart';
-                        this.style.background = '';
-                    }, 2000);
-                    
-                    // Show notification
-                    showNotification(`${itemName} added to cart!`);
-                });
-            });
-
-            // Filter functionality
-            const filterSelects = document.querySelectorAll('.filter-select');
-            filterSelects.forEach(select => {
-                select.addEventListener('change', function() {
-                    // Add filter logic here
-                    console.log('Filter changed:', this.value);
-                });
-            });
-
-            // Share wishlist
-            const shareButton = document.querySelector('.btn-secondary');
-            if (shareButton) {
-                shareButton.addEventListener('click', function() {
-                    if (navigator.share) {
-                        navigator.share({
-                            title: 'My LuxeShop Wishlist',
-                            text: 'Check out my wishlist on LuxeShop!',
-                            url: window.location.href
-                        });
-                    } else {
-                        // Fallback for browsers that don't support Web Share API
-                        const url = window.location.href;
-                        navigator.clipboard.writeText(url).then(() => {
-                            showNotification('Wishlist link copied to clipboard!');
-                        });
-                    }
-                });
-            }
-
-            // Add all to cart
-            const addAllButton = document.querySelector('.wishlist-actions .btn-primary');
-            if (addAllButton) {
-                addAllButton.addEventListener('click', function() {
-                    const availableItems = document.querySelectorAll('.wishlist-item .stock-status.in-stock, .wishlist-item .stock-status.low-stock');
-                    if (availableItems.length > 0) {
-                        showNotification(`${availableItems.length} items added to cart!`);
-                    }
-                });
-            }
         });
 
         function updateWishlistStats() {
             const items = document.querySelectorAll('.wishlist-item');
-            const itemCount = items.length;
+            const totalValue = Array.from(items).reduce((acc, item) => {
+                const priceText = item.querySelector('.price').textContent;
+                const price = parseFloat(priceText.replace('₹', '').replace(/,/g, ''));
+                return acc + (isNaN(price) ? 0 : price);
+            }, 0);
+
+            document.getElementById('items-saved').textContent = items.length;
+            document.getElementById('total-value').textContent = `₹${totalValue.toFixed(2)}`;
             
-            // Update stats
-            document.querySelector('.stat-item .number').textContent = itemCount;
-            
-            // Update navigation badge
-            const badge = document.querySelector('.nav-icon .badge');
-            if (badge) {
-                badge.textContent = itemCount;
+            if (items.length === 0) {
+                const wishlistGrid = document.getElementById('wishlist-grid');
+                wishlistGrid.innerHTML = `
+                    <div class="empty-wishlist">
+                        <i class="fas fa-heart-broken"></i>
+                        <h3>Your Wishlist is Empty</h3>
+                        <p>Looks like you haven't added anything to your wishlist yet.</p>
+                        <a href="{{ url_for('shop') }}" class="btn btn-primary">Start Shopping</a>
+                    </div>`;
             }
         }
 
-        function showNotification(message) {
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: var(--primary);
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 5px;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-                z-index: 10000;
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-            `;
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
-            // Animate in
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 3000);
+        async function removeFromWishlist(product_id) {
+            const response = await fetch('/api/wishlist/remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ product_id: product_id }),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                const itemElement = document.querySelector(`.wishlist-item[data-product-id='${product_id}']`);
+                if (itemElement) {
+                    itemElement.remove();
+                    updateWishlistStats();
+                }
+            } else {
+                alert(result.errors.join('\n'));
+            }
+        }
+
+        async function addToCart(product_id) {
+            const response = await fetch('/api/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ product_id: product_id, quantity: 1 }),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                updateCartBadge();
+                alert('Item added to cart!');
+            } else {
+                alert(result.errors.join('\n'));
+            }
+        }
+
+        async function updateCartBadge() {
+            try {
+                const response = await fetch('/api/cart/count');
+                const data = await response.json();
+                const cartBadge = document.getElementById('cartBadge');
+                if (cartBadge) {
+                    cartBadge.textContent = data.count;
+                }
+            } catch (error) {
+                console.error('Error fetching cart count:', error);
+            }
         }
     </script>
 </body>

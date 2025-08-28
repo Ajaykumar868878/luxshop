@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Dashboard - LuxeShop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --error: #e74c3c;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+        }
+        .seller-dashboard {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        header h1 {
+            font-size: 24px;
+            color: var(--primary);
+            margin: 0;
+        }
+        .logout-btn {
+            background-color: var(--secondary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+        main {
+            flex: 1;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr 2.5fr;
+            grid-template-rows: auto 1fr;
+            gap: 40px;
+            grid-template-areas:
+                "revenue add-product"
+                "products products";
+        }
+        .panel {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+        }
+        .panel h2 {
+            font-size: 20px;
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+        .revenue-panel { grid-area: revenue; }
+        .add-product-panel { grid-area: add-product; }
+        .your-products-panel { grid-area: products; }
+
+        .revenue-display {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--success);
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #34495e;
+        }
+        .notification {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            color: white;
+            display: none;
+        }
+        .notification.success {
+            background-color: var(--success);
+        }
+        .notification.error {
+            background-color: var(--error);
+        }
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #fdfdfd;
+            transition: box-shadow 0.3s;
+        }
+        .product-card:hover {
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .product-info {
+            padding: 15px;
+        }
+        .product-info h3 {
+            font-size: 16px;
+            margin: 0 0 10px 0;
+        }
+        .product-info p {
+            margin: 0;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="seller-dashboard">
+        <header>
+            <h1>Seller Dashboard</h1>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        </header>
+        <main>
+            <div class="panel revenue-panel">
+                <h2>Revenue Overview</h2>
+                <div class="revenue-display">
+                    ${{ "%.2f"|format(total_revenue) }}
+                </div>
+            </div>
+
+            <div class="panel add-product-panel">
+                <h2>Add a New Product</h2>
+                <div id="notification-area" class="notification"></div>
+                <form id="add-product-form">
+                    <div class="form-group">
+                        <label for="name">Product Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price ($)</label>
+                        <input type="number" id="price" name="price" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="stock_quantity">Stock Quantity</label>
+                        <input type="number" id="stock_quantity" name="stock_quantity" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="image_url">Image URL</label>
+                        <input type="url" id="image_url" name="image_url" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Add Product</button>
+                </form>
+            </div>
+            <div class="panel your-products-panel">
+                <h2>Your Products</h2>
+                <div id="product-list" class="product-list">
+                    {% if products %}
+                        {% for product in products %}
+                            <div class="product-card">
+                                <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                                <div class="product-info">
+                                    <h3>{{ product.name }}</h3>
+                                    <p><strong>Price:</strong> ${{ "%.2f"|format(product.price) }}</p>
+                                    <p><strong>Stock:</strong> {{ product.stock_quantity }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>You have not added any products yet. Use the form on the left to get started.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('add-product-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            
+            const notificationArea = document.getElementById('notification-area');
+
+            try {
+                const response = await fetch('/api/seller/products/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    notificationArea.textContent = result.message;
+                    notificationArea.className = 'notification success';
+                    notificationArea.style.display = 'block';
+                    form.reset();
+                    // Optionally, refresh the product list here
+                } else {
+                    notificationArea.textContent = result.errors ? result.errors.join(', ') : 'An unknown error occurred.';
+                    notificationArea.className = 'notification error';
+                    notificationArea.style.display = 'block';
+                }
+            } catch (error) {
+                notificationArea.textContent = 'A network error occurred. Please try again.';
+                notificationArea.className = 'notification error';
+                notificationArea.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

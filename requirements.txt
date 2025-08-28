@@ -2,4 +2,6 @@ Flask==2.3.3
 Werkzeug==2.3.7
 python-dotenv==1.0.0
 supabase==2.3.4
+supabase-py
+bcrypt
 postgrest==0.13.2
