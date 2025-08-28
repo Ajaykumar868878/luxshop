@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, make_response
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash, make_response
+from datetime import datetime
 from functools import wraps
 import hashlib
 import os
-from datetime import datetime
 import re
 from dotenv import load_dotenv
 from supabase import create_client, Client
@@ -12,6 +12,25 @@ import gotrue
 load_dotenv()
 
 app = Flask(__name__)
+
+# Custom Jinja filter for formatting datetime strings
+@app.template_filter('format_datetime')
+def format_datetime(value, format='%b %d, %Y, %I:%M %p'):
+    if value is None:
+        return ""
+    try:
+        # Attempt to parse timezone-aware ISO format
+        dt_object = datetime.fromisoformat(str(value).replace('Z', '+00:00'))
+        return dt_object.strftime(format)
+    except (ValueError, TypeError):
+        # Fallback for other formats or if it's already a datetime object
+        try:
+            # Assuming it might be a simple string without timezone
+            dt_object = datetime.strptime(str(value), '%Y-%m-%d %H:%M:%S.%f')
+            return dt_object.strftime(format)
+        except (ValueError, TypeError):
+            return value # Return original value if all parsing fails
+
 
 # Configure logging
 import logging
@@ -265,31 +284,26 @@ def wishlist():
         flash('Please log in to view your wishlist.', 'info')
         return redirect(url_for('login_page'))
 
+    user_id = session['user_id']
     try:
-        user_id = session['user_id']
-        
-        # Get product IDs from user's wishlist
+        # Fetch wishlist items for the current user
         wishlist_response = supabase.table('wishlist').select('product_id').eq('user_id', user_id).execute()
         
         if not wishlist_response.data:
-            # Render wishlist with no items if it's empty
             return render_template('wishlist.html', wishlist_items=[])
-
+            
         product_ids = [item['product_id'] for item in wishlist_response.data]
         
         # Fetch product details for the wishlist items
-        # This assumes you have a 'products' table with product details
         products_response = supabase.table('products').select('*').in_('id', product_ids).execute()
         
         wishlist_items = products_response.data if products_response.data else []
             
         return render_template('wishlist.html', wishlist_items=wishlist_items)
-
     except Exception as e:
         app.logger.error(f"Error fetching wishlist page: {str(e)}", exc_info=True)
         flash('An error occurred while fetching your wishlist.', 'danger')
         return render_template('wishlist.html', wishlist_items=[])
-
 
 @app.route('/test-supabase')
 def test_supabase():
@@ -494,24 +508,33 @@ def admin_login_page():
 
 @app.route('/api/admin/login', methods=['POST'])
 def handle_admin_login():
-    """Handle admin login form submission"""
+    """Handle admin login form submission using Supabase."""
     try:
         data = request.get_json() if request.is_json else request.form
         email = data.get('email', '').strip().lower()
         password = data.get('password', '')
 
-        # IMPORTANT: Hardcoded admin credentials. Replace with a secure check against a database.
-        if email == 'admin@luxeshop.com' and password == 'admin':
-            session['admin_logged_in'] = True
-            app.logger.info(f"Admin user {email} logged in successfully")
-            return jsonify({
-                'success': True,
-                'message': 'Admin login successful! Redirecting...',
-                'redirect_url': url_for('admin_dashboard')
-            })
-        else:
-            app.logger.warning(f"Failed admin login attempt for email: {email}")
-            return jsonify({'success': False, 'errors': ['Invalid admin credentials.']}), 401
+        if not email or not password:
+            return jsonify({'success': False, 'errors': ['Email and password are required.']}), 400
+
+        # Query the 'admins' table in Supabase
+        result = supabase.table('admins').select('*').eq('email', email).single().execute()
+
+        if result.data:
+            admin_user = result.data
+            # IMPORTANT: This is a plain text password comparison.
+            # For production, you should hash the password before storing and compare hashes.
+            if admin_user['password'] == password:
+                session['admin_logged_in'] = True
+                app.logger.info(f"Admin user {email} logged in successfully")
+                return jsonify({
+                    'success': True,
+                    'message': 'Admin login successful! Redirecting...',
+                    'redirect_url': url_for('admin_dashboard')
+                })
+
+        app.logger.warning(f"Failed admin login attempt for email: {email}")
+        return jsonify({'success': False, 'errors': ['Invalid admin credentials.']}), 401
 
     except Exception as e:
         app.logger.critical(f"Unexpected error in admin login handler: {str(e)}", exc_info=True)
@@ -523,7 +546,115 @@ def admin_dashboard():
     if not session.get('admin_logged_in'):
         flash('Please log in as an admin to view this page.', 'error')
         return redirect(url_for('admin_login_page'))
-    return render_template('admindash.html')
+    
+    try:
+        # Fetch stats
+        users_res = supabase.table('users').select('id', count='exact').execute()
+        products_res = supabase.table('products').select('id', count='exact').execute()
+        order_items_res = supabase.table('order_items').select('quantity, price_at_purchase').execute()
+
+        stats = {
+            'total_users': users_res.count if hasattr(users_res, 'count') else 0,
+            'total_products': products_res.count if hasattr(products_res, 'count') else 0,
+            'total_orders': len(order_items_res.data) if hasattr(order_items_res, 'data') else 0,
+            'total_revenue': sum(item['quantity'] * item['price_at_purchase'] for item in (order_items_res.data or []))
+        }
+
+        # Fetch recent data
+        recent_users = supabase.table('users').select('*').order('created_at', desc=True).limit(5).execute().data or []
+        recent_orders = supabase.table('order_items').select('*, users(username), products(name)').order('created_at', desc=True).limit(5).execute().data or []
+
+        return render_template('admin_dashboard_content.html', stats=stats, users=recent_users, orders=recent_orders)
+
+    except Exception as e:
+        app.logger.error(f"Error loading admin dashboard: {str(e)}", exc_info=True)
+        flash('Could not load admin dashboard data.', 'danger')
+        return render_template('admin_dashboard_content.html', stats={}, users=[], orders=[])
+
+@app.route('/admin/products/add')
+@no_cache
+def add_product_page():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login_page'))
+    return render_template('add_product.html')
+
+@app.route('/api/admin/products', methods=['POST'])
+@no_cache
+def create_product():
+    if not session.get('admin_logged_in'):
+        return jsonify({'success': False, 'errors': ['Authentication required.']}), 403
+
+    try:
+        data = request.get_json()
+        # Basic validation
+        required_fields = ['name', 'description', 'price', 'stock_quantity', 'image_url', 'category', 'seller_id']
+        if not all(field in data for field in required_fields):
+            return jsonify({'success': False, 'errors': ['Missing required fields.']}), 400
+
+        # Insert into Supabase
+        res = supabase.table('products').insert(data).execute()
+
+        if res.data:
+            flash('Product added successfully!', 'success')
+            return jsonify({'success': True, 'data': res.data})
+        else:
+            # Supabase v2 might return an error in a different structure
+            error_message = res.error.message if hasattr(res, 'error') and res.error else 'Failed to add product.'
+            return jsonify({'success': False, 'errors': [error_message]}), 500
+
+    except Exception as e:
+        app.logger.error(f"Error creating product: {str(e)}", exc_info=True)
+        return jsonify({'success': False, 'errors': [f'An unexpected error occurred: {str(e)}']}), 500
+
+@app.route('/admin/products')
+@no_cache
+def admin_products():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login_page'))
+    try:
+        products_res = supabase.table('products').select('*').order('created_at', desc=True).execute()
+        products = products_res.data if hasattr(products_res, 'data') else []
+    except Exception as e:
+        app.logger.error(f"Error fetching products for admin: {str(e)}", exc_info=True)
+        flash('Could not load products.', 'danger')
+        products = []
+    return render_template('admin_products.html', products=products)
+
+@app.route('/admin/orders')
+@no_cache
+def admin_orders():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login_page'))
+    try:
+        # Fetching order_items and joining with products and users to get more details
+        # This assumes you have 'product_id' and 'user_id' in your 'order_items' table
+        orders_res = supabase.table('order_items').select('*, products(name), users(username)').order('created_at', desc=True).execute()
+        orders = orders_res.data if hasattr(orders_res, 'data') else []
+    except Exception as e:
+        app.logger.error(f"Error fetching orders for admin: {str(e)}", exc_info=True)
+        flash('Could not load orders.', 'danger')
+        orders = []
+    return render_template('admin_orders.html', orders=orders)
+
+@app.route('/admin/customers')
+@no_cache
+def admin_customers():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login_page'))
+    try:
+        users_res = supabase.table('users').select('*').order('created_at', desc=True).execute()
+        customers = users_res.data if hasattr(users_res, 'data') else []
+    except Exception as e:
+        app.logger.error(f"Error fetching customers for admin: {str(e)}", exc_info=True)
+        flash('Could not load customers.', 'danger')
+        customers = []
+    return render_template('admin_customers.html', customers=customers)
+
+@app.route('/admin/logout')
+def admin_logout():
+    session.pop('admin_logged_in', None)
+    flash('You have been logged out.', 'success')
+    return redirect(url_for('admin_login_page'))
 
 @app.route('/sellerdash')
 @no_cache

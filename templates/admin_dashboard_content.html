@@ -1,0 +1,99 @@
+{% extends 'admindash.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Dashboard</h1>
+</div>
+
+<!-- Stats Cards -->
+<section class="stats">
+    <div class="stat-card">
+        <i class="fas fa-users"></i>
+        <div class="stat-info">
+            <h3>{{ stats.total_users|default(0) }}</h3>
+            <p>Total Customers</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <i class="fas fa-box"></i>
+        <div class="stat-info">
+            <h3>{{ stats.total_products|default(0) }}</h3>
+            <p>Total Products</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <i class="fas fa-shopping-cart"></i>
+        <div class="stat-info">
+            <h3>{{ stats.total_orders|default(0) }}</h3>
+            <p>Total Orders</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <i class="fas fa-dollar-sign"></i>
+        <div class="stat-info">
+            <h3>${{ "%.2f"|format(stats.total_revenue|default(0)) }}</h3>
+            <p>Total Revenue</p>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Activity -->
+<div class="row">
+    <div class="col-lg-7">
+        <section class="recent-orders">
+            <h2>Recent Orders</h2>
+            <table class="table table-borderless table-hover">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Product</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.order_id }}</td>
+                        <td>{{ order.users.username if order.users else 'N/A' }}</td>
+                        <td>{{ order.products.name if order.products else 'N/A' }}</td>
+                        <td><strong>${{ "%.2f"|format(order.price_at_purchase * order.quantity) }}</strong></td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center">No recent orders.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+    <div class="col-lg-5">
+        <section class="recent-orders">
+            <h2>New Customers</h2>
+            <table class="table table-borderless table-hover">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Joined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td><i class="fas fa-user me-2 text-secondary"></i>{{ user.username }}</td>
+                        <td>{{ user.created_at|format_datetime }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="2" class="text-center">No new customers.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'admindash.html' %}
+
+{% block title %}Admin - Products{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Manage Products</h1>
+    <a href="{{ url_for('add_product_page') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Product</a>
+</div>
+
+<div class="recent-orders">
+    <h2>All Products</h2>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.id }}</td>
+                <td>{{ product.name }}</td>
+                <td>${{ "%.2f"|format(product.price) }}</td>
+                <td>{{ product.stock_quantity }}</td>
+                <td>
+                    <a href="#" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
+                    <a href="#" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="text-center">No products found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
